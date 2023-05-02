@@ -11,6 +11,9 @@ import path from 'path';
 import winston from 'winston';
 
 import { AppConfig } from './app.config';
+import { AuthModule } from './modules/auth/auth.module';
+import { JwtAuthGuard } from './modules/auth/guards/jwt.guard';
+import { UsersModule } from './modules/users/users.module';
 
 @Module({
   imports: [
@@ -93,7 +96,12 @@ import { AppConfig } from './app.config';
       synchronize: true,
       logging: process.env.NODE_ENV === 'development' ? true : false,
     }),
+    AuthModule,
+    UsersModule,
   ],
-  providers: [{ provide: APP_GUARD, useClass: ThrottlerGuard }],
+  providers: [
+    { provide: APP_GUARD, useClass: ThrottlerGuard },
+    { provide: APP_GUARD, useClass: JwtAuthGuard },
+  ],
 })
 export class AppModule {}

@@ -8,32 +8,30 @@ declare global {
       // App
       API_PORT: number;
 
-      //  DB POSTGRES
+      //  Database
       POSTGRES_DB_HOST: string;
       POSTGRES_DB_PORT: string;
       POSTGRES_DB_NAME: string;
       POSTGRES_USER: string;
       POSTGRES_PASS: string;
 
-      // Secret
-      PASSWORD_SECRET_KEY: string;
-      AUTH_JWT_SECRET_KEY: string;
-      ADMIN_EMAIL: string;
-      ADMIN_PASSWORD: string;
+      // // Google
+      // GOOGLE_CLIENT_ID: string;
+      // GOOGLE_CLIENT_SECRET: string;
 
-      // Google
-      GOOGLE_CLIENT_ID: string;
-      GOOGLE_CLIENT_SECRET: string;
+      // // Firebase
+      // FIREBASE_PROJECT_ID: string;
+      // FIREBASE_CLIENT_EMAIL: string;
+      // FIREBASE_PRIVATE_KEY: string;
 
-      // Firebase
-      FIREBASE_PROJECT_ID: string;
-      FIREBASE_CLIENT_EMAIL: string;
-      FIREBASE_PRIVATE_KEY: string;
+      // // AWS
+      // AWS_ACCESS_KEY_ID: string;
+      // AWS_SECRET_ACCESS_KEY: string;
+      // AWS_BUCKET_NAME: string;
 
-      // AWS
-      AWS_ACCESS_KEY_ID: string;
-      AWS_SECRET_ACCESS_KEY: string;
-      AWS_BUCKET_NAME: string;
+      // Auth
+      JWT_SECRET_KEY: string;
+      HASH_SECRET_KEY: string;
     }
   }
 }

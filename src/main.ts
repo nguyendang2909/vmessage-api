@@ -32,7 +32,7 @@ async function bootstrap() {
 
   app.useLogger(app.get(WINSTON_MODULE_NEST_PROVIDER));
 
-  app.use(helmet);
+  app.use(helmet());
 
   app.enableCors({
     origin: true,
