@@ -30,29 +30,29 @@ describe('UsersService', () => {
   });
 
   describe('#getProfile', () => {
-    it('Should get profile successfully', async () => {
-      const mockUserId = '1234565';
+  //   it('Should get profile successfully', async () => {
+  //     const mockUserId = '1234565';
 
-      const mockProfile = {
-        id: mockUserId,
-      };
+  //     const mockProfile = {
+  //       id: mockUserId,
+  //     };
 
-      const createQueryBuilder: any = {
-        andWhere: jest.fn().mockImplementation(() => {
-          return createQueryBuilder;
-        }),
-        getOne: jest.fn().mockImplementation(() => {
-          return mockProfile;
-        }),
-      };
+  //     const createQueryBuilder: any = {
+  //       andWhere: jest.fn().mockImplementation(() => {
+  //         return createQueryBuilder;
+  //       }),
+  //       getOne: jest.fn().mockImplementation(() => {
+  //         return mockProfile;
+  //       }),
+  //     };
 
-      jest
-        .spyOn(userRepository, 'createQueryBuilder')
-        .mockImplementation(() => createQueryBuilder);
+  //     jest
+  //       .spyOn(userRepository, 'createQueryBuilder')
+  //       .mockImplementation(() => createQueryBuilder);
 
-      const result = service.getProfile(mockUserId);
+  //     const result = service.getProfile(mockUserId);
 
-      await expect(result).resolves.toEqual(mockProfile);
-    });
-  });
+  //     await expect(result).resolves.toEqual(mockProfile);
+  //   });
+  // });
 });

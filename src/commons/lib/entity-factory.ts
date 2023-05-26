@@ -49,4 +49,8 @@ export class EntityFactory {
 
     return query;
   }
+
+  public static getSelectFields(fields: string[], entityName: string) {
+    return fields.map((field) => `${entityName}.${field}`);
+  }
 }

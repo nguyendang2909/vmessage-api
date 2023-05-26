@@ -17,6 +17,30 @@ export class AuthAdminService {
 
   private readonly logger = new Logger(AuthAdminService.name);
 
+  private async onApplicationBootstrap() {
+    try {
+      const existAdminUser = await this.userRepository.findOne({
+        where: {
+          phoneNumber: '+84971016191',
+        },
+      });
+
+      if (!existAdminUser && process.env.ADMIN_PASSWORD) {
+        const adminUser = this.userRepository.create({
+          phoneNumber: '+84971016191',
+          password: this.encryptionsService.hash(process.env.ADMIN_PASSWORD),
+          firstName: 'Nguyen Dang',
+          lastName: 'Quynh',
+          role: ERole.admin,
+        });
+
+        await this.userRepository.save(adminUser);
+      }
+    } catch (err) {
+      this.logger.log(err);
+    }
+  }
+
   create(createAuthDto: CreateAuthDto) {
     return 'This action adds a new auth';
   }

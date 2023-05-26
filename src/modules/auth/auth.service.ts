@@ -1,11 +1,6 @@
-import {
-  BadRequestException,
-  Injectable,
-  UnauthorizedException,
-} from '@nestjs/common';
+import { Injectable, UnauthorizedException } from '@nestjs/common';
 
 import { AuthUsersService } from './auth-users.service';
-import { CreateAuthDto } from './dto/create-auth.dto';
 import { LoginByPhoneNumberDto } from './dto/login-by-phone-number.dto';
 import { EncryptionsService } from './encryptions.service';
 

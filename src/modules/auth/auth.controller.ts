@@ -11,7 +11,7 @@ import { LoginByPhoneNumberDto } from './dto/login-by-phone-number.dto';
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
 
-  @Post('/login-by-phone-number')
+  @Post('/login/phone-numbe')
   @IsPublicEndpoint()
   private async loginByPhoneNumber(
     @Body() loginByPhoneNumberDto: LoginByPhoneNumberDto,

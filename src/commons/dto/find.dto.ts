@@ -1,10 +1,12 @@
 import { ApiProperty } from '@nestjs/swagger';
+import { Transform } from 'class-transformer';
 import { IsArray, IsNotEmpty, IsString } from 'class-validator';
 
 export class FindDto {
   @ApiProperty({ type: [String] })
   @IsNotEmpty()
-  @IsArray()
+  @Transform(({ value }) => value.split(','))
   @IsString({ each: true })
-  fields: string[];
+  @IsArray()
+  f: string[];
 }
