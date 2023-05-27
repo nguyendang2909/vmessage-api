@@ -32,7 +32,7 @@ export class AuthService {
   }
 
   public async checkCanRegister(canRegisterDto: CanRegisterDto) {
-    return !!(await this.authUserService.findOneOrFail(canRegisterDto, {
+    return !(await this.authUserService.findOne(canRegisterDto, {
       selects: ['id'],
     }));
   }
