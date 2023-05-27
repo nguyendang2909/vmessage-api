@@ -41,9 +41,7 @@ export class EntityFactory {
 
     const entityName = this.getEntityName(entity);
 
-    const addSelects = selects.map((select) => {
-      return `${entityName}.${select}`;
-    });
+    const addSelects = this.getSelectFields(selects, entityName);
 
     query = query.addSelect(addSelects);
 

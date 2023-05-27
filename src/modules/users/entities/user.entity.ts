@@ -7,13 +7,13 @@ import { ERole } from '../../roles/roles.enum';
 @Entity()
 export class User extends BaseEntity {
   @Column({ length: 300, nullable: false, type: 'varchar' })
-  password!: string;
+  password?: string;
 
   @Column({ length: 20, nullable: false, type: 'varchar' })
   phoneNumber!: string;
 
-  @Column({ enum: ERole, nullable: false, type: 'enum' })
-  role: ERole;
+  @Column({ default: ERole.member, enum: ERole, nullable: false, type: 'enum' })
+  role!: ERole;
 
   @Column({ length: 100, nullable: false, type: 'varchar' })
   firstName!: string;

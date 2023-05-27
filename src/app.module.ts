@@ -13,6 +13,7 @@ import winston from 'winston';
 import { AppConfig } from './app.config';
 import { AuthModule } from './modules/auth/auth.module';
 import { JwtAuthGuard } from './modules/auth/guards/jwt.guard';
+import { ChatsModule } from './modules/chats/chats.module';
 import { UsersModule } from './modules/users/users.module';
 
 @Module({
@@ -98,6 +99,7 @@ import { UsersModule } from './modules/users/users.module';
     }),
     AuthModule,
     UsersModule,
+    ChatsModule,
   ],
   providers: [
     { provide: APP_GUARD, useClass: ThrottlerGuard },

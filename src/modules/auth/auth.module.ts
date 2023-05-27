@@ -9,6 +9,7 @@ import { AuthController } from './auth.controller';
 import { AuthService } from './auth.service';
 import { AuthUsersService } from './auth-users.service';
 import { EncryptionsService } from './encryptions.service';
+import { FirebaseService } from './firebase.service';
 import { JwtStrategy } from './strageties/jwt-auth.strategy';
 
 @Module({
@@ -34,6 +35,7 @@ import { JwtStrategy } from './strageties/jwt-auth.strategy';
     AuthAdminService,
     AuthUsersService,
     EncryptionsService,
+    FirebaseService,
   ],
 })
 export class AuthModule {}

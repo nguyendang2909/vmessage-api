@@ -6,7 +6,6 @@ import { ServerOptions } from 'socket.io';
 
 export class RedisIoAdapter extends IoAdapter {
   private adapterConstructor: ReturnType<typeof createAdapter>;
-
   private logger = new Logger(RedisIoAdapter.name);
 
   async connectToRedis(): Promise<void> {
