@@ -1,4 +1,8 @@
-import { Injectable, UnauthorizedException } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  UnauthorizedException,
+} from '@nestjs/common';
 
 import { AuthUsersService } from './auth-users.service';
 import { CanRegisterDto } from './dto/check-can-register.dto';
@@ -23,6 +27,10 @@ export class AuthService {
     const decoded = await this.firebaseService.decodeToken(token);
 
     const phoneNumber = decoded.phone_number;
+
+    if (!phoneNumber) {
+      throw new BadRequestException('Token is invalid!');
+    }
 
     return await this.authUserService.createByPhoneNumber({
       firstName,
@@ -50,6 +58,10 @@ export class AuthService {
       { phoneNumber },
       { selects: ['password', 'id', 'role'] },
     );
+
+    if (!userId || !userPassword || !userRole) {
+      throw new BadRequestException('Try login with OTP!');
+    }
 
     const isMatchPassword = this.encryptionsService.isMatchWithHashedKey(
       password,

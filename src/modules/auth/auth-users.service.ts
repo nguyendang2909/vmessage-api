@@ -25,7 +25,7 @@ export class AuthUsersService {
   public async createByPhoneNumber(
     createByPhoneNumberPayload: CreateByPhoneNumberPayload,
   ) {
-    const { phoneNumber, firstName, lastName } = createByPhoneNumberPayload;
+    const { phoneNumber } = createByPhoneNumberPayload;
 
     if (!phoneNumber) {
       throw new BadRequestException('Phone number is required!');

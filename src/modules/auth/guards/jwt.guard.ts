@@ -7,6 +7,7 @@ import { Reflector } from '@nestjs/core';
 import { AuthGuard } from '@nestjs/passport';
 
 import { AppConfig } from '../../../app.config';
+import { User } from '../../users/entities/user.entity';
 
 @Injectable()
 export class JwtAuthGuard extends AuthGuard(['jwt']) {
@@ -29,7 +30,12 @@ export class JwtAuthGuard extends AuthGuard(['jwt']) {
     return super.canActivate(context);
   }
 
-  handleRequest(err, user, info, context: ExecutionContext) {
+  handleRequest<T extends User>(
+    err: unknown,
+    user: T,
+    info: unknown,
+    context: ExecutionContext,
+  ) {
     const req = context.switchToHttp().getRequest();
 
     if (user) {
