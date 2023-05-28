@@ -21,7 +21,7 @@ export class AuthService {
 
   public async registerByPhoneNumber(
     registerByPhoneNumberDto: RegisterByPhoneNumberDto,
-  ) {
+  ): Promise<{ accessToken: string }> {
     const { token, firstName, lastName } = registerByPhoneNumberDto;
     const decoded = await this.firebaseService.decodeToken(token);
 
@@ -42,7 +42,7 @@ export class AuthService {
     }
 
     return {
-      token: this.encryptionsService.signJwt({
+      accessToken: this.encryptionsService.signJwt({
         sub: id,
         id,
         role,
@@ -58,7 +58,7 @@ export class AuthService {
 
   public async loginByPhoneNumber(
     loginByPhoneNumberDto: LoginByPhoneNumberDto,
-  ): Promise<{ token: string }> {
+  ): Promise<{ accessToken: string }> {
     const { phoneNumber, password } = loginByPhoneNumberDto;
 
     const {
@@ -86,7 +86,7 @@ export class AuthService {
     }
 
     return {
-      token: this.encryptionsService.signJwt({
+      accessToken: this.encryptionsService.signJwt({
         id: userId,
         sub: userId,
         role: userRole,
