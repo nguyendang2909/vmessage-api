@@ -30,8 +30,13 @@ export class AuthController {
   @IsPublicEndpoint()
   private async checkCanRegister(@Body() checkCanRegisterDto: CanRegisterDto) {
     return {
-      type: 'registerByPhoneNumber',
-      data: await this.authService.checkCanRegister(checkCanRegisterDto),
+      type: 'canRegisterByPhoneNumber',
+      data: {
+        ...checkCanRegisterDto,
+        canRegister: await this.authService.checkCanRegister(
+          checkCanRegisterDto,
+        ),
+      },
     };
   }
 
