@@ -23,20 +23,31 @@ export class AuthService {
     registerByPhoneNumberDto: RegisterByPhoneNumberDto,
   ) {
     const { token, firstName, lastName } = registerByPhoneNumberDto;
-
     const decoded = await this.firebaseService.decodeToken(token);
 
     const phoneNumber = decoded.phone_number;
-
     if (!phoneNumber) {
       throw new BadRequestException('Token is invalid!');
     }
 
-    return await this.authUserService.createByPhoneNumber({
+    const user = await this.authUserService.createByPhoneNumber({
       firstName,
       lastName,
       phoneNumber,
     });
+
+    const { id, role } = user;
+    if (!id || !role) {
+      throw new BadRequestException();
+    }
+
+    return {
+      token: this.encryptionsService.signJwt({
+        sub: id,
+        id,
+        role,
+      }),
+    };
   }
 
   public async checkCanRegister(canRegisterDto: CanRegisterDto) {

@@ -26,13 +26,11 @@ export class AuthUsersService {
     createByPhoneNumberPayload: CreateByPhoneNumberPayload,
   ) {
     const { phoneNumber } = createByPhoneNumberPayload;
-
     if (!phoneNumber) {
       throw new BadRequestException('Phone number is required!');
     }
 
     const existUser = await this.findOne({ phoneNumber }, { selects: ['id'] });
-
     if (existUser) {
       throw new ConflictException('User with phone number exist!');
     }
