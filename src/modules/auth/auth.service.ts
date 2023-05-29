@@ -5,7 +5,7 @@ import {
 } from '@nestjs/common';
 
 import { AuthUsersService } from './auth-users.service';
-import { CanRegisterDto } from './dto/check-can-register.dto';
+import { IsExistUserDto } from './dto/is-exist-user.dto';
 import { LoginByPhoneNumberDto } from './dto/login-by-phone-number.dto';
 import { RegisterByPhoneNumberDto } from './dto/register-auth.dto';
 import { EncryptionsService } from './encryptions.service';
@@ -50,10 +50,11 @@ export class AuthService {
     };
   }
 
-  public async checkCanRegister(canRegisterDto: CanRegisterDto) {
-    return !(await this.authUserService.findOne(canRegisterDto, {
+  public async isExistUser(isExistUserDto: IsExistUserDto): Promise<boolean> {
+    const user = await this.authUserService.findOne(isExistUserDto, {
       selects: ['id'],
-    }));
+    });
+    return Boolean(user);
   }
 
   public async loginByPhoneNumber(

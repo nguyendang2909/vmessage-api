@@ -3,7 +3,7 @@ import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 
 import { IsPublicEndpoint } from '../../commons/decorators/is-public.endpoint';
 import { AuthService } from './auth.service';
-import { CanRegisterDto } from './dto/check-can-register.dto';
+import { IsExistUserDto } from './dto/is-exist-user.dto';
 import { LoginByPhoneNumberDto } from './dto/login-by-phone-number.dto';
 import { RegisterByPhoneNumberDto } from './dto/register-auth.dto';
 
@@ -26,16 +26,14 @@ export class AuthController {
     };
   }
 
-  @Post('/register/can-register')
+  @Post('/exist')
   @IsPublicEndpoint()
-  private async checkCanRegister(@Body() checkCanRegisterDto: CanRegisterDto) {
+  private async isExistUser(@Body() isExistUserDto: IsExistUserDto) {
     return {
-      type: 'canRegisterByPhoneNumber',
+      type: 'isExistUser',
       data: {
-        ...checkCanRegisterDto,
-        canRegister: await this.authService.checkCanRegister(
-          checkCanRegisterDto,
-        ),
+        ...isExistUserDto,
+        exist: await this.authService.isExistUser(isExistUserDto),
       },
     };
   }
