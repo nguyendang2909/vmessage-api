@@ -7,7 +7,7 @@ import { EGender, ERole } from '../users.enum';
 @Entity()
 export class User extends BaseEntity {
   @Column({ nullable: true, type: 'timestamp' })
-  birthdate?: Date | string;
+  birthDate?: Date | string;
 
   @Column({ length: 100, nullable: true, type: 'varchar' })
   email?: string;

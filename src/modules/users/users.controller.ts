@@ -1,8 +1,9 @@
-import { Controller, Get, Query } from '@nestjs/common';
+import { Body, Controller, Get, Patch, Query } from '@nestjs/common';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 
 import { CurrentUserId } from '../../commons/decorators/current-user-id.decorator';
 import { FindMyProfileDto } from './dto/find-my-profile.dto';
+import { UpdateMyProfileDto } from './dto/update-my-profile.dto';
 import { UsersService } from './users.service';
 
 @Controller('users')
@@ -19,6 +20,20 @@ export class UsersController {
     return {
       type: 'profile',
       data: await this.usersService.getProfile(findMyProfileDto, currentUserId),
+    };
+  }
+
+  @Patch('/profile')
+  private async updateProfile(
+    @Body() updateMyProfileDto: UpdateMyProfileDto,
+    @CurrentUserId() currentUserId: string,
+  ) {
+    return {
+      type: 'updateProfile',
+      data: await this.usersService.updateProfile(
+        updateMyProfileDto,
+        currentUserId,
+      ),
     };
   }
 }

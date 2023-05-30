@@ -4,6 +4,7 @@ import { Repository, SelectQueryBuilder } from 'typeorm';
 
 import { EntityFactory } from '../../commons/lib/entity-factory';
 import { FindMyProfileDto } from './dto/find-my-profile.dto';
+import { UpdateMyProfileDto } from './dto/update-my-profile.dto';
 import { User, userEntityName } from './entities/user.entity';
 
 @Injectable()
@@ -26,6 +27,25 @@ export class UsersService {
     }
 
     return user;
+  }
+
+  public async updateProfile(
+    updateMyProfileDto: UpdateMyProfileDto,
+    currentUserId: string,
+  ) {
+    const { birthDate, gender } = updateMyProfileDto;
+
+    const updateOptions = {
+      ...(birthDate ? { birthDate } : {}),
+      ...(gender ? { gender } : {}),
+    };
+
+    const updateResult = await this.userRepository.update(
+      { id: currentUserId },
+      updateOptions,
+    );
+
+    return Boolean(updateResult.affected);
   }
 
   private findQuery(): SelectQueryBuilder<User> {
