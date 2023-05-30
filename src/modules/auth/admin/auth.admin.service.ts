@@ -2,7 +2,7 @@ import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 
-import { ERole } from '../../roles/roles.enum';
+import { ERole } from '../../users/users.enum';
 import { User } from '../../users/entities/user.entity';
 import { EncryptionsService } from '../encryptions.service';
 

@@ -1,4 +1,4 @@
-import { ERole } from '../roles/roles.enum';
+import { ERole } from '../users/users.enum';
 
 export type AuthJwtPayload = {
   sub: string;

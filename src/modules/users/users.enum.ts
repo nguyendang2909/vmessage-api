@@ -3,3 +3,8 @@ export enum ERole {
   manager = 'manager',
   member = 'member',
 }
+
+export enum EGender {
+  male = 'male',
+  female = 'female',
+}
