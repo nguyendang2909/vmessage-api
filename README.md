@@ -47,3 +47,7 @@ mkcert -install
 mkdir -p .cert
 
 mkcert -key-file ./.cert/key.pem -cert-file ./.cert/cert.pem "localhost"
+
+# Deploy
+docker-compose -f deployment.development.yml up -d
+yarn dev
