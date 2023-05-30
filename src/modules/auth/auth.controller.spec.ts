@@ -1,8 +1,8 @@
 import { createMock } from '@golevelup/ts-jest';
 import { Test, TestingModule } from '@nestjs/testing';
 
-import { AuthController } from './auth.controller';
-import { AuthService } from './auth.service';
+import { AuthController } from './auth-sign-in.controller';
+import { AuthService } from './auth-sign-in.service';
 import { LoginByPhoneNumberDto } from './dto/login-by-phone-number.dto';
 
 describe('AuthController', () => {

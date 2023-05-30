@@ -1,6 +1,5 @@
 import {
   BadRequestException,
-  ConflictException,
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
@@ -11,10 +10,7 @@ import { Repository, SelectQueryBuilder } from 'typeorm';
 import { EntityFactory } from '../../commons/lib/entity-factory';
 import { FindOptions } from '../../commons/types/find-options.type';
 import { User, userEntityName } from '../users/entities/user.entity';
-import {
-  CreateByPhoneNumberPayload,
-  FindOneAuthUserConditions,
-} from './auth.type';
+import { CreateUserPayload, FindOneAuthUserConditions } from './auth.type';
 
 @Injectable()
 export class AuthUsersService {
@@ -22,22 +18,16 @@ export class AuthUsersService {
     @InjectRepository(User) private readonly userRepository: Repository<User>,
   ) {}
 
-  public async createByPhoneNumber(
-    createByPhoneNumberPayload: CreateByPhoneNumberPayload,
-  ) {
-    const { phoneNumber } = createByPhoneNumberPayload;
+  public async create(
+    createUserPayload: CreateUserPayload,
+  ): Promise<Partial<User>> {
+    const { phoneNumber } = createUserPayload;
     if (!phoneNumber) {
-      throw new BadRequestException('Phone number is required!');
+      throw new BadRequestException('Phone number does not exist!');
     }
+    const user = this.userRepository.create({ phoneNumber });
 
-    const existUser = await this.findOne({ phoneNumber }, { selects: ['id'] });
-    if (existUser) {
-      throw new ConflictException('User with phone number exist!');
-    }
-
-    const user = this.userRepository.create(createByPhoneNumberPayload);
-
-    return await this.userRepository.save<User>(user);
+    return await this.userRepository.save(user);
   }
 
   public async findOne(
@@ -58,11 +48,7 @@ export class AuthUsersService {
       });
     }
 
-    query = EntityFactory.getFindQueryByOptions({
-      entity: User,
-      query,
-      findOptions,
-    });
+    query = EntityFactory.getFindQueryByOptions(query, User, findOptions);
 
     return await query.getOne();
   }
@@ -89,11 +75,12 @@ export class AuthUsersService {
   ): Promise<Partial<User> | null> {
     let query = this.findQuery().where(`${userEntityName}.id = :id`, { id });
 
-    query = EntityFactory.getFindQueryByOptions({
-      entity: User,
+    query = EntityFactory.getFindQueryByOptions(
       query,
+      User,
+
       findOptions,
-    });
+    );
 
     return await query.getOne();
   }

@@ -5,8 +5,8 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 
 import { User } from '../users/entities/user.entity';
 import { AuthAdminService } from './admin/auth.admin.service';
-import { AuthController } from './auth.controller';
-import { AuthService } from './auth.service';
+import { AuthSignInController } from './auth-sign-in.controller';
+import { AuthSignInService } from './auth-sign-in.service';
 import { AuthUsersService } from './auth-users.service';
 import { EncryptionsService } from './encryptions.service';
 import { FirebaseService } from './firebase.service';
@@ -28,10 +28,10 @@ import { JwtStrategy } from './strageties/jwt-auth.strategy';
       inject: [ConfigService],
     }),
   ],
-  controllers: [AuthController],
+  controllers: [AuthSignInController],
   providers: [
     JwtStrategy,
-    AuthService,
+    AuthSignInService,
     AuthAdminService,
     AuthUsersService,
     EncryptionsService,

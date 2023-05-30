@@ -18,8 +18,6 @@ export type FindOneAuthUserConditions = {
   phoneNumber?: string;
 };
 
-export type CreateByPhoneNumberPayload = {
-  firstName: string;
-  lastName: string;
-  phoneNumber: string;
+export type CreateUserPayload = {
+  phoneNumber?: string;
 };

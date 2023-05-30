@@ -1,7 +1,7 @@
 import { createMock } from '@golevelup/ts-jest';
 import { Test, TestingModule } from '@nestjs/testing';
 
-import { AuthService } from './auth.service';
+import { AuthService } from './auth-sign-in.service';
 import { AuthUsersService } from './auth-users.service';
 import { LoginByPhoneNumberDto } from './dto/login-by-phone-number.dto';
 import { EncryptionsService } from './encryptions.service';

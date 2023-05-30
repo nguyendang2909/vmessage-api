@@ -8,3 +8,7 @@ export enum EGender {
   male = 'male',
   female = 'female',
 }
+
+export enum EUserStatus {
+  banned = 'banned',
+}

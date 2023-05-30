@@ -1,21 +1,9 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsNotEmpty, IsString, MaxLength } from 'class-validator';
+import { IsNotEmpty, IsString } from 'class-validator';
 
-export class RegisterByPhoneNumberDto {
+export class SignInByPhoneNumberDto {
   @ApiProperty({ type: String })
   @IsNotEmpty()
   @IsString()
   token: string;
-
-  @ApiProperty({ type: String })
-  @IsNotEmpty()
-  @IsString()
-  @MaxLength(100)
-  firstName: string;
-
-  @ApiProperty({ type: String })
-  @IsNotEmpty()
-  @IsString()
-  @MaxLength(100)
-  lastName: string;
 }

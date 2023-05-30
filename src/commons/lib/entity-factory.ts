@@ -28,15 +28,11 @@ export class EntityFactory {
     return { take, skip };
   }
 
-  public static getFindQueryByOptions<T extends BaseEntity>({
-    query,
-    entity,
-    findOptions,
-  }: {
-    query: SelectQueryBuilder<T>;
-    entity: new () => T;
-    findOptions: FindOptions;
-  }): SelectQueryBuilder<T> {
+  public static getFindQueryByOptions<T extends BaseEntity>(
+    query: SelectQueryBuilder<T>,
+    entity: new () => T,
+    findOptions: FindOptions,
+  ): SelectQueryBuilder<T> {
     const { selects } = findOptions;
 
     const entityName = this.getEntityName(entity);
