@@ -18,7 +18,7 @@ export class AuthSignInController {
     @Body() signInByPhoneNumberDto: SignInByPhoneNumberDto,
   ) {
     return {
-      type: 'siginInByPhoneNumber',
+      type: 'sigInByPhoneNumber',
       data: await this.authSignInService.signInByPhoneNumber(
         signInByPhoneNumberDto,
       ),

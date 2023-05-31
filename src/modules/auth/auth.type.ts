@@ -21,3 +21,7 @@ export type FindOneAuthUserConditions = {
 export type CreateUserPayload = {
   phoneNumber?: string;
 };
+
+export type SignInData = {
+  accessToken: string;
+};

@@ -6,6 +6,7 @@ import {
 } from '@nestjs/common';
 
 import { EUserStatus } from '../users/users.enum';
+import { SignInData } from './auth.type';
 import { AuthUsersService } from './auth-users.service';
 import { SignInByPhoneNumberWithPasswordDto } from './dto/login-by-phone-number.dto';
 import { SignInByPhoneNumberDto } from './dto/register-auth.dto';
@@ -22,7 +23,7 @@ export class AuthSignInService {
 
   public async signInByPhoneNumber(
     signInByPhoneNumberDto: SignInByPhoneNumberDto,
-  ): Promise<{ accessToken: string }> {
+  ): Promise<SignInData> {
     const { token } = signInByPhoneNumberDto;
     const decoded = await this.firebaseService.decodeToken(token);
     const phoneNumber = decoded.phone_number;
@@ -32,7 +33,7 @@ export class AuthSignInService {
     let user = await this.authUsersService.findOne(
       { phoneNumber },
       {
-        selects: ['status'],
+        selects: ['status', 'role'],
       },
     );
     if (user) {
@@ -47,7 +48,7 @@ export class AuthSignInService {
     }
     const { id, role } = user;
     if (!id || !role) {
-      throw new BadRequestException();
+      throw new BadRequestException('User is not correct!');
     }
 
     return {
@@ -61,7 +62,7 @@ export class AuthSignInService {
 
   public async signInByPhoneNumberWithPassword(
     signInByPhoneNumberWithPasswordDto: SignInByPhoneNumberWithPasswordDto,
-  ): Promise<{ accessToken: string }> {
+  ): Promise<SignInData> {
     const { phoneNumber, password } = signInByPhoneNumberWithPasswordDto;
     const {
       password: userPassword,
