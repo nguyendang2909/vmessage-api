@@ -7,6 +7,7 @@ import {
   utilities as nestWinstonModuleUtilities,
   WinstonModule,
 } from 'nest-winston';
+import { JoiPipeModule } from 'nestjs-joi';
 import path from 'path';
 import winston from 'winston';
 
@@ -14,6 +15,7 @@ import { AppConfig } from './app.config';
 import { AuthModule } from './modules/auth/auth.module';
 import { JwtAuthGuard } from './modules/auth/guards/jwt.guard';
 import { ChatsModule } from './modules/chats/chats.module';
+import { RoomsModule } from './modules/rooms/rooms.module';
 import { UsersModule } from './modules/users/users.module';
 
 @Module({
@@ -97,9 +99,11 @@ import { UsersModule } from './modules/users/users.module';
       synchronize: true,
       logging: process.env.NODE_ENV === 'development' ? true : false,
     }),
+    JoiPipeModule.forRoot(),
     AuthModule,
     UsersModule,
     ChatsModule,
+    RoomsModule,
   ],
   providers: [
     { provide: APP_GUARD, useClass: ThrottlerGuard },
