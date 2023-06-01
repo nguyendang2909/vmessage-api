@@ -112,38 +112,31 @@ export class CustomReturnFieldsInterceptor<T>
     next: CallHandler,
   ): Observable<Response<T>> {
     const req = context.switchToHttp().getRequest();
-
+    if (req.query.f) {
+      req.query.f = req.query.f.split(',');
+    }
     const requestLogger = {
       body: req.body,
       params: req.params,
       query: req.query,
       url: req.originalUrl,
     };
-
     this.logger.log(`request: ${JSON.stringify(requestLogger)}`);
-
     const now = Date.now();
-
     const fields = _.get(req, 'query.fields', '');
 
     return next.handle().pipe(
       map((data) => {
         this.logger.log(`Consumming Time... ${Date.now() - now}ms`);
-
         if (fields && fields.length > 0) {
           const responseData = _.get(data, 'data');
-
           const pickData = deepPick(responseData, fields);
-
           _.set(data, 'data', pickData);
-
           this.logger.log(`Total Time... ${Date.now() - now}ms`);
-
           this.logger.log(`response: ${JSON.stringify(data)}`);
 
           return data;
         }
-
         this.logger.log(`response: ${JSON.stringify(data)}`);
 
         return data;

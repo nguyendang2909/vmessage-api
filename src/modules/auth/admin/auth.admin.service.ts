@@ -2,8 +2,8 @@ import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 
-import { ERole } from '../../users/users.enum';
 import { User } from '../../users/entities/user.entity';
+import { ERole } from '../../users/users.enum';
 import { EncryptionsService } from '../encryptions.service';
 
 @Injectable()
@@ -17,15 +17,16 @@ export class AuthAdminService {
 
   private async onApplicationBootstrap() {
     try {
+      const phoneNumber = '+84971016191';
       const existAdminUser = await this.userRepository.findOne({
         where: {
-          phoneNumber: '+84971016191',
+          phoneNumber,
         },
       });
 
       if (!existAdminUser && process.env.ADMIN_PASSWORD) {
         const adminUser = this.userRepository.create({
-          phoneNumber: '+84971016191',
+          phoneNumber,
           password: this.encryptionsService.hash(process.env.ADMIN_PASSWORD),
           firstName: 'Nguyen Dang',
           lastName: 'Quynh',

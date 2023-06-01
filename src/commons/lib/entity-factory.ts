@@ -1,3 +1,4 @@
+import _ from 'lodash';
 import { SelectQueryBuilder } from 'typeorm';
 
 import { BaseEntity } from '../entities/base.entity';
@@ -30,7 +31,7 @@ export class EntityFactory {
 
   public static getFindQueryByOptions<T extends BaseEntity>(
     query: SelectQueryBuilder<T>,
-    entity: new () => T,
+    entity: new (obj: any) => T,
     findOptions: FindOptions,
   ): SelectQueryBuilder<T> {
     const { selects } = findOptions;
@@ -46,5 +47,26 @@ export class EntityFactory {
 
   public static getSelectFields(fields: string[], entityName: string) {
     return fields.map((field) => `${entityName}.${field}`);
+  }
+
+  public static getSelectFieldsAsObj<T extends string[]>(fields: T) {
+    return fields.reduce((a, v) => ({ ...a, [v]: true }), {});
+  }
+
+  public static encodeCursor(str: string): string {
+    return Buffer.from(str, 'utf-8').toString('base64');
+  }
+
+  public static decodeCursor(str: string): string {
+    return Buffer.from(str, 'base64').toString('utf-8');
+  }
+
+  public static getCursor<T extends { id?: string }[]>(arr: T): string | null {
+    const cursorAsString = _.last(arr)?.id;
+    if (cursorAsString) {
+      return this.encodeCursor(cursorAsString);
+    }
+
+    return null;
   }
 }

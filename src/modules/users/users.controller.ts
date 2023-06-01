@@ -1,10 +1,18 @@
-import { Body, Controller, Get, Patch, Post, Query } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  Param,
+  ParseUUIDPipe,
+  Patch,
+  Query,
+} from '@nestjs/common';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 
 import { CurrentUserId } from '../../commons/decorators/current-user-id.decorator';
-import { IsPublicEndpoint } from '../../commons/decorators/is-public.endpoint';
 import { FindMyProfileDto } from './dto/find-my-profile.dto';
-import { IsExistUserDto } from './dto/is-exist-user.dto';
+import { FindOneUserByIdDto } from './dto/find-one-user-by-id.dto';
+import { FindOneUserDto } from './dto/is-exist-user.dto';
 import { UpdateMyProfileDto } from './dto/update-my-profile.dto';
 import { UsersService } from './users.service';
 
@@ -14,15 +22,17 @@ import { UsersService } from './users.service';
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}
 
-  @Post('/exist')
-  @IsPublicEndpoint()
-  private async isExistUser(@Body() isExistUserDto: IsExistUserDto) {
+  @Get('/search')
+  private async findOne(
+    @Query() findOneUserDto: FindOneUserDto,
+    @CurrentUserId() currentUserId: string,
+  ) {
     return {
-      type: 'isExistUser',
-      data: {
-        ...isExistUserDto,
-        exist: await this.usersService.isExistUser(isExistUserDto),
-      },
+      type: 'user',
+      data: await this.usersService.findOneOrFail(
+        findOneUserDto,
+        currentUserId,
+      ),
     };
   }
 
@@ -34,6 +44,22 @@ export class UsersController {
     return {
       type: 'profile',
       data: await this.usersService.getProfile(findMyProfileDto, currentUserId),
+    };
+  }
+
+  @Get('/:id')
+  private async findOneById(
+    @Param('id', ParseUUIDPipe) id: string,
+    @Query() findOneUserByIdDto: FindOneUserByIdDto,
+    @CurrentUserId() currentUserId: string,
+  ) {
+    return {
+      type: 'profile',
+      data: await this.usersService.findOneOrFailById(
+        id,
+        findOneUserByIdDto,
+        currentUserId,
+      ),
     };
   }
 

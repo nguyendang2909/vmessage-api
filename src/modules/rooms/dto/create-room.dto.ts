@@ -1,7 +1,16 @@
-import { IsArray, IsNotEmpty } from 'class-validator';
+import { ApiProperty } from '@nestjs/swagger';
+import Joi from 'joi';
+import { JoiSchema, JoiSchemaOptions } from 'nestjs-joi';
 
+@JoiSchemaOptions({})
 export class CreateRoomDto {
-  @IsNotEmpty()
-  @IsArray()
+  @ApiProperty({ type: [String] })
+  @JoiSchema(
+    Joi.array()
+      .required()
+      .unique()
+      .min(1)
+      .items(Joi.string().guid().required()),
+  )
   userIds: string[];
 }

@@ -1,7 +1,8 @@
-import { Column, Entity } from 'typeorm';
+import { Column, Entity, OneToMany } from 'typeorm';
 
 import { BaseEntity } from '../../../commons/entities/base.entity';
 import { EntityFactory } from '../../../commons/lib/entity-factory';
+import { Contact } from '../../contacts/entities/contact.entity';
 import { EGender, ERole, EUserStatus } from '../users.enum';
 
 @Entity()
@@ -15,7 +16,7 @@ export class User extends BaseEntity {
   @Column({ length: 100, nullable: true, type: 'varchar' })
   firstName?: string;
 
-  @Column({ nullable: true, type: 'enum', enum: EGender })
+  @Column({ enum: EGender, nullable: true, type: 'enum' })
   gender?: string;
 
   @Column({ length: 100, nullable: true, type: 'varchar' })
@@ -24,10 +25,19 @@ export class User extends BaseEntity {
   @Column({ length: 300, nullable: true, type: 'varchar' })
   password?: string;
 
-  @Column({ length: 20, nullable: false, type: 'varchar' })
+  @Column({
+    length: 20,
+    nullable: false,
+    type: 'varchar',
+  })
   phoneNumber?: string;
 
-  @Column({ default: ERole.member, enum: ERole, nullable: false, type: 'enum' })
+  @Column({
+    default: ERole.member,
+    enum: ERole,
+    nullable: false,
+    type: 'enum',
+  })
   role?: ERole;
 
   @Column({ enum: EUserStatus, nullable: true, type: 'enum' })
@@ -38,6 +48,18 @@ export class User extends BaseEntity {
 
   @Column({ type: 'uuid', nullable: true })
   updatedBy?: string;
+
+  @OneToMany(() => Contact, (contact) => contact.user)
+  contacts?: Contact[];
+
+  @OneToMany(() => Contact, (contact) => contact.friend)
+  relatedUsers?: Contact[];
+
+  constructor(obj: Partial<User>) {
+    super();
+
+    Object.assign(this, obj);
+  }
 }
 
 export const userEntityName = EntityFactory.getEntityName(User);

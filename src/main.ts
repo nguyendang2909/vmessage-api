@@ -1,4 +1,4 @@
-import { INestApplication, Logger, ValidationPipe } from '@nestjs/common';
+import { INestApplication, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { NestFactory } from '@nestjs/core';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
@@ -25,43 +25,29 @@ async function bootstrap() {
           },
         })
       : await NestFactory.create(AppModule);
-
   const configService = app.get(ConfigService);
-
   const API_PORT = configService.get<string>('API_PORT') || 4000;
-
   app.useLogger(app.get(WINSTON_MODULE_NEST_PROVIDER));
-
   app.use(helmet());
-
   app.enableCors({
     origin: true,
     credentials: true,
   });
-
-  app.useGlobalPipes(
-    new ValidationPipe({
-      transform: true,
-      whitelist: true,
-    }),
-  );
-
+  // app.useGlobalPipes(
+  //   new ValidationPipe({
+  //     transform: true,
+  //     whitelist: true,
+  //   }),
+  // );
   app.useGlobalFilters(new HttpExceptionFilter());
-
   app.useGlobalInterceptors(new CustomReturnFieldsInterceptor());
-
   if (NODE_ENV === 'development') {
     createSwagger(app);
   }
-
   const redisIoAdapter = new RedisIoAdapter(app);
-
   await redisIoAdapter.connectToRedis();
-
   app.useWebSocketAdapter(redisIoAdapter);
-
   await app.listen(API_PORT);
-
   logger.log(`Application running on port ${API_PORT}`);
 }
 
@@ -74,10 +60,9 @@ function createSwagger(app: INestApplication) {
       { type: 'http', scheme: 'bearer', bearerFormat: 'JWT' },
       'JWT',
     )
+    .addServer('/', 'Server')
     .build();
-
   const document = SwaggerModule.createDocument(app, options);
-
   SwaggerModule.setup('swagger', app, document);
 }
 
