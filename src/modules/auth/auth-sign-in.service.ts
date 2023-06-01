@@ -8,8 +8,8 @@ import {
 import { EUserStatus } from '../users/users.enum';
 import { SignInData } from './auth.type';
 import { AuthUsersService } from './auth-users.service';
-import { SignInByPhoneNumberWithPasswordDto } from './dto/login-by-phone-number.dto';
-import { SignInByPhoneNumberDto } from './dto/register-auth.dto';
+import { SignInWithPhoneNumberAndPasswordDto } from './dto/login-by-phone-number.dto';
+import { SignInWithPhoneNumberDto } from './dto/register-auth.dto';
 import { EncryptionsService } from './encryptions.service';
 import { FirebaseService } from './firebase.service';
 
@@ -21,8 +21,8 @@ export class AuthSignInService {
     private readonly firebaseService: FirebaseService,
   ) {}
 
-  public async signInByPhoneNumber(
-    signInByPhoneNumberDto: SignInByPhoneNumberDto,
+  public async signInWithPhoneNumber(
+    signInByPhoneNumberDto: SignInWithPhoneNumberDto,
   ): Promise<SignInData> {
     const { token } = signInByPhoneNumberDto;
     const decoded = await this.firebaseService.decodeToken(token);
@@ -60,8 +60,8 @@ export class AuthSignInService {
     };
   }
 
-  public async signInByPhoneNumberWithPassword(
-    signInByPhoneNumberWithPasswordDto: SignInByPhoneNumberWithPasswordDto,
+  public async signInWithPhoneNumberAndPassword(
+    signInByPhoneNumberWithPasswordDto: SignInWithPhoneNumberAndPasswordDto,
   ): Promise<SignInData> {
     const { phoneNumber, password } = signInByPhoneNumberWithPasswordDto;
     const {

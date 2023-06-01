@@ -7,7 +7,7 @@ import {
   MinLength,
 } from 'class-validator';
 
-export class SignInByPhoneNumberWithPasswordDto {
+export class SignInWithPhoneNumberAndPasswordDto {
   @ApiProperty({ type: String, default: '+84971016191' })
   @IsNotEmpty()
   @IsPhoneNumber()

@@ -4,8 +4,8 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { SignInData } from './auth.type';
 import { AuthSignInController } from './auth-sign-in.controller';
 import { AuthSignInService } from './auth-sign-in.service';
-import { SignInByPhoneNumberWithPasswordDto } from './dto/login-by-phone-number.dto';
-import { SignInByPhoneNumberDto } from './dto/register-auth.dto';
+import { SignInWithPhoneNumberAndPasswordDto } from './dto/login-by-phone-number.dto';
+import { SignInWithPhoneNumberDto } from './dto/register-auth.dto';
 import { FirebaseService } from './firebase.service';
 
 describe('AuthController', () => {
@@ -37,7 +37,7 @@ describe('AuthController', () => {
 
   describe('#signInByPhoneNumber', () => {
     it('Should sign in by phone number successfully', async () => {
-      const signInByPhoneNumberDto = createMock<SignInByPhoneNumberDto>({
+      const signInByPhoneNumberDto = createMock<SignInWithPhoneNumberDto>({
         token: 'abxyz',
       });
       const mockSignInData = createMock<SignInData>({
@@ -45,25 +45,27 @@ describe('AuthController', () => {
       });
 
       jest
-        .spyOn(service, 'signInByPhoneNumber')
+        .spyOn(service, 'signInWithPhoneNumber')
         .mockResolvedValue(mockSignInData);
 
-      const result = controller['signInByPhoneNumber'](signInByPhoneNumberDto);
+      const result = controller['signInWithPhoneNumber'](
+        signInByPhoneNumberDto,
+      );
 
       await expect(result).resolves.toEqual({
-        type: 'sigInByPhoneNumber',
+        type: 'sigInWithPhoneNumber',
         data: mockSignInData,
       });
-      expect(service.signInByPhoneNumber).toHaveBeenCalledWith(
+      expect(service.signInWithPhoneNumber).toHaveBeenCalledWith(
         signInByPhoneNumberDto,
       );
     });
   });
 
-  describe('#signInByPhoneNumberWithPassword', () => {
+  describe('#signInWithPhoneNumberAndPassword', () => {
     it('Should sign in by phone number with password successfully', async () => {
-      const signInByPhoneNumberWithPasswordDto =
-        createMock<SignInByPhoneNumberWithPasswordDto>({
+      const signInWithPhoneNumberAndPasswordDto =
+        createMock<SignInWithPhoneNumberAndPasswordDto>({
           phoneNumber: '+84989898',
           password: 'abcxyzs',
         });
@@ -72,19 +74,19 @@ describe('AuthController', () => {
       });
 
       jest
-        .spyOn(service, 'signInByPhoneNumberWithPassword')
+        .spyOn(service, 'signInWithPhoneNumberAndPassword')
         .mockResolvedValue(mockSignInData);
 
-      const result = controller['signInByPhoneNumberWithPassword'](
-        signInByPhoneNumberWithPasswordDto,
+      const result = controller['signInWithPhoneNumberAndPassword'](
+        signInWithPhoneNumberAndPasswordDto,
       );
 
       await expect(result).resolves.toEqual({
-        type: 'signInByPhoneNumberWithPassword',
+        type: 'signInWithPhoneNumberAndPassword',
         data: mockSignInData,
       });
-      expect(service.signInByPhoneNumberWithPassword).toHaveBeenCalledWith(
-        signInByPhoneNumberWithPasswordDto,
+      expect(service.signInWithPhoneNumberAndPassword).toHaveBeenCalledWith(
+        signInWithPhoneNumberAndPasswordDto,
       );
     });
   });

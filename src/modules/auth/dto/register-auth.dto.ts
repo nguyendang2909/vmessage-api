@@ -1,9 +1,10 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsNotEmpty, IsString } from 'class-validator';
+import Joi from 'joi';
+import { JoiSchema, JoiSchemaOptions } from 'nestjs-joi';
 
-export class SignInByPhoneNumberDto {
+@JoiSchemaOptions({ stripUnknown: true })
+export class SignInWithPhoneNumberDto {
   @ApiProperty({ type: String })
-  @IsNotEmpty()
-  @IsString()
+  @JoiSchema(Joi.string().required())
   token: string;
 }

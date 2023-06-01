@@ -3,8 +3,8 @@ import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 
 import { IsPublicEndpoint } from '../../commons/decorators/is-public.endpoint';
 import { AuthSignInService } from './auth-sign-in.service';
-import { SignInByPhoneNumberWithPasswordDto } from './dto/login-by-phone-number.dto';
-import { SignInByPhoneNumberDto } from './dto/register-auth.dto';
+import { SignInWithPhoneNumberAndPasswordDto } from './dto/login-by-phone-number.dto';
+import { SignInWithPhoneNumberDto } from './dto/register-auth.dto';
 
 @Controller('/auth/sign-in')
 @ApiTags('/auth/sign-in')
@@ -14,12 +14,12 @@ export class AuthSignInController {
 
   @Post('/phone-number')
   @IsPublicEndpoint()
-  private async signInByPhoneNumber(
-    @Body() signInByPhoneNumberDto: SignInByPhoneNumberDto,
+  private async signInWithPhoneNumber(
+    @Body() signInByPhoneNumberDto: SignInWithPhoneNumberDto,
   ) {
     return {
-      type: 'sigInByPhoneNumber',
-      data: await this.authSignInService.signInByPhoneNumber(
+      type: 'sigInWithPhoneNumber',
+      data: await this.authSignInService.signInWithPhoneNumber(
         signInByPhoneNumberDto,
       ),
     };
@@ -27,14 +27,14 @@ export class AuthSignInController {
 
   @Post('/phone-number/password')
   @IsPublicEndpoint()
-  private async signInByPhoneNumberWithPassword(
+  private async signInWithPhoneNumberAndPassword(
     @Body()
-    signInByPhoneNumberWithPasswordDto: SignInByPhoneNumberWithPasswordDto,
+    signInWithPhoneNumberAndPasswordDto: SignInWithPhoneNumberAndPasswordDto,
   ) {
     return {
-      type: 'signInByPhoneNumberWithPassword',
-      data: await this.authSignInService.signInByPhoneNumberWithPassword(
-        signInByPhoneNumberWithPasswordDto,
+      type: 'signInWithPhoneNumberAndPassword',
+      data: await this.authSignInService.signInWithPhoneNumberAndPassword(
+        signInWithPhoneNumberAndPasswordDto,
       ),
     };
   }

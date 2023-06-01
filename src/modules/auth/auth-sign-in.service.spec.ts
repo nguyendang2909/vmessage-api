@@ -6,7 +6,7 @@ import { User } from '../users/entities/user.entity';
 import { ERole, EUserStatus } from '../users/users.enum';
 import { AuthSignInService } from './auth-sign-in.service';
 import { AuthUsersService } from './auth-users.service';
-import { SignInByPhoneNumberDto } from './dto/register-auth.dto';
+import { SignInWithPhoneNumberDto } from './dto/register-auth.dto';
 import { EncryptionsService } from './encryptions.service';
 import { FirebaseService } from './firebase.service';
 
@@ -47,7 +47,7 @@ describe('AuthService', () => {
 
   describe('#signInByPhoneNumber', () => {
     it('Should sign in by phone number successfully when found user', async () => {
-      const signInByPhoneNumberDto: SignInByPhoneNumberDto = {
+      const signInByPhoneNumberDto: SignInWithPhoneNumberDto = {
         token: 'abcd',
       };
       const mockDecodedToken: DecodedIdToken = {
@@ -78,7 +78,7 @@ describe('AuthService', () => {
         .mockResolvedValue(mockFindOneUserData);
       jest.spyOn(encryptionsService, 'signJwt').mockReturnValue(mockJwt);
 
-      const result = service.signInByPhoneNumber(signInByPhoneNumberDto);
+      const result = service.signInWithPhoneNumber(signInByPhoneNumberDto);
 
       await expect(result).resolves.toEqual({ accessToken: mockJwt });
       expect(firebaseService.decodeToken).toHaveBeenCalledWith(
@@ -98,7 +98,7 @@ describe('AuthService', () => {
     });
 
     it('Should sign in by phone number successfully when not found user', async () => {
-      const signInByPhoneNumberDto: SignInByPhoneNumberDto = {
+      const signInByPhoneNumberDto: SignInWithPhoneNumberDto = {
         token: 'abcd',
       };
       const mockDecodedToken: DecodedIdToken = {
@@ -130,7 +130,7 @@ describe('AuthService', () => {
         .mockResolvedValue(mockCreateUserData);
       jest.spyOn(encryptionsService, 'signJwt').mockReturnValue(mockJwt);
 
-      const result = service.signInByPhoneNumber(signInByPhoneNumberDto);
+      const result = service.signInWithPhoneNumber(signInByPhoneNumberDto);
 
       await expect(result).resolves.toEqual({ accessToken: mockJwt });
       expect(firebaseService.decodeToken).toHaveBeenCalledWith(
@@ -153,7 +153,7 @@ describe('AuthService', () => {
     });
 
     it('Should throw an error if token from firebase does not contain phone_number', async () => {
-      const signInByPhoneNumberDto: SignInByPhoneNumberDto = {
+      const signInByPhoneNumberDto: SignInWithPhoneNumberDto = {
         token: 'abcd',
       };
       const mockDecodedToken: DecodedIdToken = {
@@ -174,7 +174,7 @@ describe('AuthService', () => {
         .spyOn(firebaseService, 'decodeToken')
         .mockResolvedValue(mockDecodedToken);
 
-      const result = service.signInByPhoneNumber(signInByPhoneNumberDto);
+      const result = service.signInWithPhoneNumber(signInByPhoneNumberDto);
 
       await expect(result).rejects.toThrow('Token is invalid!');
       expect(firebaseService.decodeToken).toHaveBeenCalledWith(
@@ -183,7 +183,7 @@ describe('AuthService', () => {
     });
 
     it('Should throw an error when user has been banned', async () => {
-      const signInByPhoneNumberDto: SignInByPhoneNumberDto = {
+      const signInByPhoneNumberDto: SignInWithPhoneNumberDto = {
         token: 'abcd',
       };
       const mockDecodedToken: DecodedIdToken = {
@@ -213,7 +213,7 @@ describe('AuthService', () => {
         .spyOn(authUsersService, 'findOne')
         .mockResolvedValue(mockFindOneUserData);
 
-      const result = service.signInByPhoneNumber(signInByPhoneNumberDto);
+      const result = service.signInWithPhoneNumber(signInByPhoneNumberDto);
 
       await expect(result).rejects.toThrow('You have been banned!');
       expect(firebaseService.decodeToken).toHaveBeenCalledWith(
@@ -228,7 +228,7 @@ describe('AuthService', () => {
     });
 
     it('Should throw an error when user have not role', async () => {
-      const signInByPhoneNumberDto: SignInByPhoneNumberDto = {
+      const signInByPhoneNumberDto: SignInWithPhoneNumberDto = {
         token: 'abcd',
       };
       const mockDecodedToken: DecodedIdToken = {
@@ -256,7 +256,7 @@ describe('AuthService', () => {
         .spyOn(authUsersService, 'findOne')
         .mockResolvedValue(mockFindOneUserData);
 
-      const result = service.signInByPhoneNumber(signInByPhoneNumberDto);
+      const result = service.signInWithPhoneNumber(signInByPhoneNumberDto);
 
       await expect(result).rejects.toThrow('User is not correct!');
       expect(firebaseService.decodeToken).toHaveBeenCalledWith(
