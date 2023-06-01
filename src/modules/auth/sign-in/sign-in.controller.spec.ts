@@ -1,23 +1,23 @@
 import { createMock } from '@golevelup/ts-jest';
 import { Test, TestingModule } from '@nestjs/testing';
 
-import { SignInData } from './auth.type';
-import { AuthSignInController } from './auth-sign-in.controller';
-import { AuthSignInService } from './auth-sign-in.service';
-import { SignInWithPhoneNumberAndPasswordDto } from './dto/login-by-phone-number.dto';
-import { SignInWithPhoneNumberDto } from './dto/register-auth.dto';
-import { FirebaseService } from './firebase.service';
+import { SignInData } from '../auth.type';
+import { SignInWithPhoneNumberDto } from '../dto/sign-in-with-phone-number.dto';
+import { SignInWithPhoneNumberAndPasswordDto } from '../dto/sign-in-with-phone-number-and-password.dto';
+import { FirebaseService } from '../firebase.service';
+import { SignInController } from './sign-in.controller';
+import { SignInService } from './sign-in.service';
 
-describe('AuthController', () => {
-  let controller: AuthSignInController;
-  let service: AuthSignInService;
+describe('SignInController', () => {
+  let controller: SignInController;
+  let service: SignInService;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
-      controllers: [AuthSignInController],
+      controllers: [SignInController],
       providers: [
         {
-          provide: AuthSignInService,
+          provide: SignInService,
           useValue: createMock(),
         },
         {
@@ -27,8 +27,8 @@ describe('AuthController', () => {
       ],
     }).compile();
 
-    controller = module.get<AuthSignInController>(AuthSignInController);
-    service = module.get<AuthSignInService>(AuthSignInService);
+    controller = module.get<SignInController>(SignInController);
+    service = module.get<SignInService>(SignInService);
   });
 
   it('should be defined', () => {

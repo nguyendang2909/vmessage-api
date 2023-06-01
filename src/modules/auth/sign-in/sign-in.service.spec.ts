@@ -2,16 +2,16 @@ import { createMock } from '@golevelup/ts-jest';
 import { Test, TestingModule } from '@nestjs/testing';
 import { DecodedIdToken } from 'firebase-admin/lib/auth/token-verifier';
 
-import { User } from '../users/entities/user.entity';
-import { ERole, EUserStatus } from '../users/users.enum';
-import { AuthSignInService } from './auth-sign-in.service';
-import { AuthUsersService } from './auth-users.service';
-import { SignInWithPhoneNumberDto } from './dto/register-auth.dto';
-import { EncryptionsService } from './encryptions.service';
-import { FirebaseService } from './firebase.service';
+import { User } from '../../users/entities/user.entity';
+import { ERole, EUserStatus } from '../../users/users.enum';
+import { AuthUsersService } from '../auth-users.service';
+import { SignInWithPhoneNumberDto } from '../dto/sign-in-with-phone-number.dto';
+import { EncryptionsService } from '../encryptions.service';
+import { FirebaseService } from '../firebase.service';
+import { SignInService } from './sign-in.service';
 
 describe('AuthService', () => {
-  let service: AuthSignInService;
+  let service: SignInService;
   let authUsersService: AuthUsersService;
   let encryptionsService: EncryptionsService;
   let firebaseService: FirebaseService;
@@ -19,7 +19,7 @@ describe('AuthService', () => {
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
-        AuthSignInService,
+        SignInService,
         {
           provide: AuthUsersService,
           useValue: createMock(),
@@ -35,7 +35,7 @@ describe('AuthService', () => {
       ],
     }).compile();
 
-    service = module.get<AuthSignInService>(AuthSignInService);
+    service = module.get<SignInService>(SignInService);
     authUsersService = module.get<AuthUsersService>(AuthUsersService);
     encryptionsService = module.get<EncryptionsService>(EncryptionsService);
     firebaseService = module.get<FirebaseService>(FirebaseService);

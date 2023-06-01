@@ -1,12 +1,12 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { Transform } from 'class-transformer';
-import { IsArray, IsNotEmpty, IsString } from 'class-validator';
+import Joi from 'joi';
+import { JoiSchema, JoiSchemaOptions } from 'nestjs-joi';
 
+@JoiSchemaOptions({})
 export class FindDto {
   @ApiProperty({ type: [String] })
-  @IsNotEmpty()
   @Transform(({ value }) => value.split(','))
-  @IsString({ each: true })
-  @IsArray()
+  @JoiSchema(Joi.array().items(Joi.string().required()).required())
   f: string[];
 }

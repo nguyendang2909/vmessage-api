@@ -37,17 +37,13 @@ export class AuthUsersService {
     if (_.isEmpty(findOneAuthUserConditions)) {
       return null;
     }
-
     const { phoneNumber } = findOneAuthUserConditions;
-
     let query = this.findQuery();
-
     if (phoneNumber) {
       query = query.andWhere(`${userEntityName}.phoneNumber = :phoneNumber`, {
         phoneNumber,
       });
     }
-
     query = EntityFactory.getFindQueryByOptions(query, User, findOptions);
 
     return await query.getOne();
@@ -61,7 +57,6 @@ export class AuthUsersService {
       findOneAuthUserConditions,
       findOptions,
     );
-
     if (!findResult) {
       throw new NotFoundException('User not found!');
     }
@@ -74,13 +69,7 @@ export class AuthUsersService {
     findOptions: FindOptions,
   ): Promise<Partial<User> | null> {
     let query = this.findQuery().where(`${userEntityName}.id = :id`, { id });
-
-    query = EntityFactory.getFindQueryByOptions(
-      query,
-      User,
-
-      findOptions,
-    );
+    query = EntityFactory.getFindQueryByOptions(query, User, findOptions);
 
     return await query.getOne();
   }
@@ -90,7 +79,6 @@ export class AuthUsersService {
     findOptions: FindOptions,
   ): Promise<Partial<User>> {
     const findResult = await this.findOneById(id, findOptions);
-
     if (!findResult) {
       throw new NotFoundException('User not found!');
     }

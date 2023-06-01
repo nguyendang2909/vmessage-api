@@ -1,17 +1,23 @@
+import JoiDate from '@joi/date';
 import { ApiPropertyOptional } from '@nestjs/swagger';
-import { IsDateString, IsEnum, IsOptional, IsString } from 'class-validator';
+import Joi from 'joi';
+import { JoiSchema, JoiSchemaOptions } from 'nestjs-joi';
 
 import { EGender } from '../users.enum';
 
+const JoiExtendDate = Joi.extend(JoiDate);
+
+@JoiSchemaOptions({})
 export class UpdateMyProfileDto {
   @ApiPropertyOptional({ type: String })
-  @IsOptional()
-  @IsString()
-  @IsDateString()
+  @JoiSchema(JoiExtendDate.date().format('YYYY-MM-DD').optional().raw())
   birthDate: string;
 
   @ApiPropertyOptional({ type: String })
-  @IsOptional()
-  @IsEnum(EGender)
+  @JoiSchema(
+    Joi.string()
+      .valid(...Object.values(EGender))
+      .optional(),
+  )
   gender: EGender;
 }

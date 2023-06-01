@@ -5,16 +5,16 @@ import {
   UnauthorizedException,
 } from '@nestjs/common';
 
-import { EUserStatus } from '../users/users.enum';
-import { SignInData } from './auth.type';
-import { AuthUsersService } from './auth-users.service';
-import { SignInWithPhoneNumberAndPasswordDto } from './dto/login-by-phone-number.dto';
-import { SignInWithPhoneNumberDto } from './dto/register-auth.dto';
-import { EncryptionsService } from './encryptions.service';
-import { FirebaseService } from './firebase.service';
+import { EUserStatus } from '../../users/users.enum';
+import { SignInData } from '../auth.type';
+import { AuthUsersService } from '../auth-users.service';
+import { SignInWithPhoneNumberDto } from '../dto/sign-in-with-phone-number.dto';
+import { SignInWithPhoneNumberAndPasswordDto } from '../dto/sign-in-with-phone-number-and-password.dto';
+import { EncryptionsService } from '../encryptions.service';
+import { FirebaseService } from '../firebase.service';
 
 @Injectable()
-export class AuthSignInService {
+export class SignInService {
   constructor(
     private readonly authUsersService: AuthUsersService,
     private readonly encryptionsService: EncryptionsService,

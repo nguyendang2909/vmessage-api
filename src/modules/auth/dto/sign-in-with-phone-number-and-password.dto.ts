@@ -1,22 +1,14 @@
 import { ApiProperty } from '@nestjs/swagger';
-import {
-  IsNotEmpty,
-  IsPhoneNumber,
-  IsString,
-  MaxLength,
-  MinLength,
-} from 'class-validator';
+import Joi from 'joi';
+import { JoiSchema, JoiSchemaOptions } from 'nestjs-joi';
 
+@JoiSchemaOptions({})
 export class SignInWithPhoneNumberAndPasswordDto {
   @ApiProperty({ type: String, default: '+84971016191' })
-  @IsNotEmpty()
-  @IsPhoneNumber()
+  @JoiSchema(Joi.string().required())
   phoneNumber!: string;
 
   @ApiProperty({ type: String, default: 'Onlyone2@' })
-  @IsNotEmpty()
-  @IsString()
-  @MinLength(8)
-  @MaxLength(100)
+  @JoiSchema(Joi.string().required().min(8).max(100))
   password!: string;
 }
