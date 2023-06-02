@@ -2,5 +2,5 @@ import { JoiSchemaOptions } from 'nestjs-joi';
 
 import { FindDto } from '../../../commons/dto/find.dto';
 
-@JoiSchemaOptions({})
+@JoiSchemaOptions({ stripUnknown: true })
 export class FindOneUserByIdDto extends FindDto {}

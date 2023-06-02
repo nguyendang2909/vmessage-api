@@ -2,15 +2,15 @@ import { ApiPropertyOptional } from '@nestjs/swagger';
 import Joi from 'joi';
 import { JoiSchema, JoiSchemaOptions } from 'nestjs-joi';
 
-import { EContactStatus } from '../contacts.enum';
+import { EFriendStatus } from '../friends.enum';
 
-@JoiSchemaOptions({})
+@JoiSchemaOptions({ stripUnknown: true })
 export class UpdateContactDto {
-  @ApiPropertyOptional({ type: String, enum: EContactStatus })
+  @ApiPropertyOptional({ type: Number, enum: EFriendStatus })
   @JoiSchema(
     Joi.string()
       .optional()
-      .valid(...Object.values(EContactStatus)),
+      .valid(...Object.values(EFriendStatus)),
   )
-  status?: EContactStatus;
+  status?: EFriendStatus;
 }

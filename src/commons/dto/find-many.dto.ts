@@ -4,7 +4,7 @@ import { JoiSchemaOptions } from 'nestjs-joi';
 
 import { FindDto } from './find.dto';
 
-@JoiSchemaOptions({})
+@JoiSchemaOptions({ stripUnknown: true })
 export class FindManyDto extends FindDto {
   @ApiPropertyOptional({ type: Number })
   @IsOptional()

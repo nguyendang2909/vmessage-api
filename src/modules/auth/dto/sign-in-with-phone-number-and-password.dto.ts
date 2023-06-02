@@ -2,7 +2,7 @@ import { ApiProperty } from '@nestjs/swagger';
 import Joi from 'joi';
 import { JoiSchema, JoiSchemaOptions } from 'nestjs-joi';
 
-@JoiSchemaOptions({})
+@JoiSchemaOptions({ stripUnknown: true })
 export class SignInWithPhoneNumberAndPasswordDto {
   @ApiProperty({ type: String, default: '+84971016191' })
   @JoiSchema(Joi.string().required())

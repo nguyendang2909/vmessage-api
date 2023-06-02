@@ -5,7 +5,7 @@ import { JoiSchema, JoiSchemaOptions } from 'nestjs-joi';
 
 import { EntityFactory } from '../lib/entity-factory';
 
-@JoiSchemaOptions({})
+@JoiSchemaOptions({ stripUnknown: true })
 export class FindManyCursorDto {
   @ApiPropertyOptional({ type: String })
   @JoiSchema(Joi.string().optional())

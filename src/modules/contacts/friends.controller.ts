@@ -1,7 +1,6 @@
 import {
   Body,
   Controller,
-  Delete,
   Get,
   Param,
   ParseUUIDPipe,
@@ -12,24 +11,27 @@ import {
 import { ApiTags } from '@nestjs/swagger';
 
 import { CurrentUserId } from '../../commons/decorators/current-user-id.decorator';
-import { ContactsService } from './contacts.service';
-import { CreateContactDto } from './dto/create-contact.dto';
+import { RequestFriendDto } from './dto/create-contact.dto';
 import { FindManyContactsDto } from './dto/find-many-contacts.dto';
 import { UpdateContactDto } from './dto/update-contact.dto';
+import { FriendsService } from './friends.service';
 
 @Controller('contacts')
 @ApiTags('contacts')
-export class ContactsController {
-  constructor(private readonly contactsService: ContactsService) {}
+export class FriendsController {
+  constructor(private readonly friendsService: FriendsService) {}
 
   @Post()
-  private async create(
-    @Body() createContactDto: CreateContactDto,
+  private async requestFriend(
+    @Body() requestFriendDto: RequestFriendDto,
     @CurrentUserId() currentUserId: string,
   ) {
     return {
-      type: 'createContact',
-      data: await this.contactsService.create(createContactDto, currentUserId),
+      type: 'requestFriend',
+      data: await this.friendsService.requestFriend(
+        requestFriendDto,
+        currentUserId,
+      ),
     };
   }
 
@@ -40,10 +42,10 @@ export class ContactsController {
   ) {
     return {
       type: 'findManyContacts',
-      ...(await this.contactsService.findMany(
-        findManyContactsDto,
-        currentUserId,
-      )),
+      // ...(await this.contactsService.findMany(
+      //   findManyContactsDto,
+      //   currentUserId,
+      // )),
     };
   }
 
@@ -54,7 +56,7 @@ export class ContactsController {
   ) {
     return {
       type: 'contact',
-      data: await this.contactsService.findOneOrFailById(id, currentUserId),
+      data: await this.friendsService.findOneOrFailById(id, currentUserId),
     };
   }
 
@@ -65,18 +67,7 @@ export class ContactsController {
   ) {
     return {
       type: 'updateContact',
-      data: await this.contactsService.update(id, updateContactDto),
-    };
-  }
-
-  @Delete(':id')
-  private async remove(
-    @Param('id', ParseUUIDPipe) id: string,
-    @CurrentUserId() currentUserId: string,
-  ) {
-    return {
-      type: 'removeContact',
-      data: await this.contactsService.remove(id, currentUserId),
+      data: await this.friendsService.update(id, updateContactDto),
     };
   }
 }

@@ -1,8 +1,8 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { JoiSchemaOptions } from 'nestjs-joi';
 
-@JoiSchemaOptions({})
-export class CreateContactDto {
+@JoiSchemaOptions({ stripUnknown: true })
+export class RequestFriendDto {
   @ApiProperty({ type: String })
   friendId!: string;
 }

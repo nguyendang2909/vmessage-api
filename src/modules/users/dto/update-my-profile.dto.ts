@@ -7,7 +7,7 @@ import { EGender } from '../users.enum';
 
 const JoiExtendDate = Joi.extend(JoiDate);
 
-@JoiSchemaOptions({})
+@JoiSchemaOptions({ stripUnknown: true })
 export class UpdateMyProfileDto {
   @ApiPropertyOptional({ type: String })
   @JoiSchema(JoiExtendDate.date().format('YYYY-MM-DD').optional().raw())

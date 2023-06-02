@@ -1,13 +1,17 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository, SelectQueryBuilder } from 'typeorm';
+import { Repository } from 'typeorm';
 
 import { EntityFactory } from '../../commons/lib/entity-factory';
 import { FindMyProfileDto } from './dto/find-my-profile.dto';
 import { FindOneUserByIdDto } from './dto/find-one-user-by-id.dto';
 import { FindOneUserDto } from './dto/is-exist-user.dto';
 import { UpdateMyProfileDto } from './dto/update-my-profile.dto';
-import { User, userEntityName } from './entities/user.entity';
+import { User } from './entities/user.entity';
 
 @Injectable()
 export class UsersService {
@@ -19,10 +23,15 @@ export class UsersService {
     findOneUserDto: FindOneUserDto,
     currentUserId: string,
   ): Promise<Partial<User> | null> {
-    const { phoneNumber, f } = findOneUserDto;
+    const { f } = findOneUserDto;
+    let phoneNumber = findOneUserDto.phoneNumber;
     if (!phoneNumber) {
       return null;
     }
+    if (!phoneNumber.startsWith('+')) {
+      phoneNumber = `+${phoneNumber.trim()}`;
+    }
+    console.log(111, phoneNumber);
     const findResult = await this.userRepository.findOne({
       where: {
         ...(phoneNumber ? { phoneNumber } : {}),
@@ -39,7 +48,7 @@ export class UsersService {
   ) {
     const findResult = await this.findOne(findOneUserDto, currentUserId);
     if (!findResult) {
-      throw new BadRequestException('User not found!');
+      throw new NotFoundException('User not found!');
     }
 
     return findResult;
@@ -109,15 +118,15 @@ export class UsersService {
     return Boolean(updateResult.affected);
   }
 
-  private findQuery(): SelectQueryBuilder<User> {
-    return this.userRepository
-      .createQueryBuilder(userEntityName)
-      .select(`${userEntityName}.id`);
-  }
+  // private findQuery(): SelectQueryBuilder<User> {
+  //   return this.userRepository
+  //     .createQueryBuilder(userEntityName)
+  //     .select(`${userEntityName}.id`);
+  // }
 
-  private selectFields(fields: string[]) {
-    return EntityFactory.getSelectFields(fields, userEntityName).filter(
-      (item) => item !== 'password',
-    );
-  }
+  // private selectFields(fields: string[]) {
+  //   return EntityFactory.getSelectFields(fields, userEntityName).filter(
+  //     (item) => item !== 'password',
+  //   );
+  // }
 }

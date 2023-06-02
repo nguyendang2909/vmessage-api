@@ -1,8 +1,7 @@
-import { Column, Entity, OneToMany } from 'typeorm';
+import { Column, Entity } from 'typeorm';
 
 import { BaseEntity } from '../../../commons/entities/base.entity';
 import { EntityFactory } from '../../../commons/lib/entity-factory';
-import { Contact } from '../../contacts/entities/contact.entity';
 import { EGender, ERole, EUserStatus } from '../users.enum';
 
 @Entity()
@@ -48,12 +47,6 @@ export class User extends BaseEntity {
 
   @Column({ type: 'uuid', nullable: true })
   updatedBy?: string;
-
-  @OneToMany(() => Contact, (contact) => contact.user)
-  contacts?: Contact[];
-
-  @OneToMany(() => Contact, (contact) => contact.friend)
-  relatedUsers?: Contact[];
 
   constructor(obj: Partial<User>) {
     super();
