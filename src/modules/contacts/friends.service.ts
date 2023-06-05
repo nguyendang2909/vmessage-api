@@ -3,6 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 
 import { User } from '../users/entities/user.entity';
+import { UsersService } from '../users/users.service';
 import { RequestFriendDto } from './dto/create-contact.dto';
 import { FindManyContactsDto } from './dto/find-many-contacts.dto';
 import { UpdateContactDto } from './dto/update-contact.dto';
@@ -14,6 +15,7 @@ export class FriendsService {
   constructor(
     @InjectRepository(Friend)
     private readonly contactRepository: Repository<Friend>,
+    private readonly usersService: UsersService,
   ) {}
 
   public async requestFriend(
@@ -21,9 +23,14 @@ export class FriendsService {
     currentUserId: string,
   ) {
     const { friendId } = requestFriendDto;
+    // TODO: Check exist friend user
+    await this.usersService.findOneOrFailById(
+      friendId,
+      { f: ['id'] },
+      currentUserId,
+    );
     const currentUser = new User({ id: currentUserId });
     const friendUser = new User({ id: friendId });
-    // TODO: Check exist friend user
     const existRelationship = await this.contactRepository.findOne({
       where: [
         {

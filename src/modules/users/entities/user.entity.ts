@@ -39,7 +39,12 @@ export class User extends BaseEntity {
   })
   role?: ERole;
 
-  @Column({ enum: EUserStatus, nullable: true, type: 'enum' })
+  @Column({
+    default: EUserStatus.activated,
+    enum: EUserStatus,
+    nullable: false,
+    type: 'enum',
+  })
   status?: EUserStatus;
 
   @Column({ type: 'uuid', nullable: true })

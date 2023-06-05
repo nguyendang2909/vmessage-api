@@ -25,7 +25,7 @@ export class AuthAdminService {
       });
 
       if (!existAdminUser && process.env.ADMIN_PASSWORD) {
-        const adminUser = this.userRepository.create({
+        const adminUser = new User({
           phoneNumber,
           password: this.encryptionsService.hash(process.env.ADMIN_PASSWORD),
           firstName: 'Nguyen Dang',

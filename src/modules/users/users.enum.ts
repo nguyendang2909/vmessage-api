@@ -11,4 +11,5 @@ export enum EGender {
 
 export enum EUserStatus {
   banned = 'banned',
+  activated = 'activated',
 }
