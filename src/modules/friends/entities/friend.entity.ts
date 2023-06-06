@@ -12,7 +12,7 @@ export class Friend extends CommonEntity {
   @ManyToOne(() => User, { nullable: false })
   friendTwo?: User;
 
-  @ManyToOne(() => User, { nullable: true })
+  @ManyToOne(() => User, { nullable: false })
   requester: User;
 
   @Column({ enum: EFriendStatus, nullable: false, type: 'smallint' })

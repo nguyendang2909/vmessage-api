@@ -15,7 +15,7 @@ import { AppConfig } from './app.config';
 import { JwtAuthGuard } from './guards/jwt.guard';
 import { AuthModule } from './modules/auth/auth.module';
 import { ChatsModule } from './modules/chats/chats.module';
-import { FriendsModule } from './modules/contacts/friends.module';
+import { FriendsModule } from './modules/friends/friends.module';
 import { RoomsModule } from './modules/rooms/rooms.module';
 import { UsersModule } from './modules/users/users.module';
 

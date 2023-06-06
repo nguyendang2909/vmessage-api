@@ -1,7 +1,7 @@
 export enum EFriendStatus {
   blocked = 'blocked',
   rejected = 'rejected',
-  following = 'following',
+  cancelled = 'cancelled',
   pending = 'pending',
   accepted = 'accepted',
 }

@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 
@@ -23,7 +23,6 @@ export class FriendsService {
     currentUserId: string,
   ) {
     const { friendId } = requestFriendDto;
-    // TODO: Check exist friend user
     await this.usersService.findOneOrFailById(
       friendId,
       { f: ['id'] },
@@ -51,8 +50,26 @@ export class FriendsService {
         requester: currentUser,
       });
     }
-    const { status, requester } = existRelationship;
-    if (status === EFriendStatus.pending) {
+    const { status, requester, friendOne, friendTwo } = existRelationship;
+    switch (status) {
+      case EFriendStatus.pending:
+        if (requester === friendId) {
+          return await this.contactRepository.save({
+            id: existRelationship.id,
+            status: EFriendStatus.accepted,
+          });
+        }
+        return existRelationship;
+      case EFriendStatus.accepted:
+        throw new BadRequestException({
+          message: 'Your already were friend!',
+          errorCode: 'ALREADY_FRIEND',
+        });
+      case EFriendStatus.blocked:
+        throw new BadRequestException({
+          message: 'User is not available!',
+          errorCode: 'USER_NOT_AVAILABLE',
+        });
     }
 
     // if (existContact && existContact.status) {
