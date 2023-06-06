@@ -36,16 +36,7 @@ export class JwtAuthGuard extends AuthGuard(['jwt']) {
     info: unknown,
     context: ExecutionContext,
   ) {
-    const req = context.switchToHttp().getRequest();
-
     if (user) {
-      if (req.method === 'POST') {
-        req.body.createdBy = user.id;
-
-        req.body.updatedBy = user.id;
-      } else if (['PATCH', 'PUT'].includes(req.method)) {
-        req.body.updatedBy = user.id;
-      }
       return user;
     }
 

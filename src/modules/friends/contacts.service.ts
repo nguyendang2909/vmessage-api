@@ -1,5 +1,6 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import moment from 'moment';
 import { Repository } from 'typeorm';
 
 import { EntityFactory } from '../../commons/lib/entity-factory';
@@ -23,7 +24,7 @@ export class ContactsService {
   public async requestFriend(
     requestFriendDto: RequestFriendDto,
     currentUserId: string,
-  ) {
+  ): Promise<{ success: boolean }> {
     const { targetUserId } = requestFriendDto;
     await this.usersService.findOneOrFailById(
       targetUserId,
@@ -31,76 +32,80 @@ export class ContactsService {
       currentUserId,
     );
     const currentUser = new User({ id: currentUserId });
-    const friendUser = new User({ id: targetUserId });
-    const existRelationship = await this.contactRepository.findOne({
+    const targetUser = new User({ id: targetUserId });
+    const existContact = await this.contactRepository.findOne({
       where: [
         {
           userOne: currentUser,
-          userTwo: friendUser,
+          userTwo: targetUser,
         },
         {
-          userOne: friendUser,
+          userOne: targetUser,
           userTwo: currentUser,
         },
       ],
-      select: ['id', 'status', 'requester'],
+      relations: ['userOne', 'userTwo', 'requester'],
+      select: {
+        id: true,
+        status: true,
+        userOne: { id: true },
+        userTwo: { id: true },
+        requester: { id: true },
+      },
     });
-    if (!existRelationship) {
-      return await this.contactRepository.save({
+    const now = moment().toDate();
+    if (!existContact) {
+      const contact = new Contact({
         userOne: currentUser,
-        userTwo: friendUser,
+        userTwo: targetUser,
+        status: EContactStatus.pending,
+        statusAt: now,
         requester: currentUser,
+        createdBy: currentUserId,
+        updatedBy: currentUserId,
       });
+      await this.contactRepository.save(contact);
+
+      return { success: true };
     }
-    const { status, requester, userOne, userTwo } = existRelationship;
-    switch (status) {
+    const { id: existContactId, status: existContactStatus } = existContact;
+    const requesterId = existContact.requester?.id;
+    if (!existContactId || !requesterId || !existContactStatus) {
+      throw new BadRequestException();
+    }
+    const isRequesterMe = currentUserId === requesterId;
+    switch (existContactStatus) {
       case EContactStatus.pending:
-        if (requester === targetUserId) {
-          return await this.contactRepository.save({
-            id: existRelationship.id,
-            status: EContactStatus.accepted,
-          });
+        if (isRequesterMe) {
+          return { success: true };
         }
-        return existRelationship;
+        await this.contactRepository.update(
+          { id: existContactId },
+          {
+            status: EContactStatus.accepted,
+            requester: currentUser,
+            statusAt: now,
+          },
+        );
+        return { success: true };
+
       case EContactStatus.accepted:
         throw new BadRequestException({
-          message: 'Your already were friend!',
           errorCode: 'ALREADY_FRIEND',
+          message: 'You are already friend!',
         });
-      case EContactStatus.blocked:
-        throw new BadRequestException({
-          message: 'User is not available!',
-          errorCode: 'USER_NOT_AVAILABLE',
-        });
+
+      default:
+        await this.contactRepository.update(
+          { id: existContactId },
+          {
+            status: EContactStatus.pending,
+            statusAt: now,
+            requester: currentUser,
+          },
+        );
+        return { success: true };
     }
-
-    // if (existContact && existContact.status) {
-    //   const { status: contactStatus } = existContact;
-    //   if (contactStatus) {
-    //     if (contactStatus === EContactStatus.blocked) {
-    //       throw new ForbiddenException('You have been banned from user!');
-    //     }
-    //     if (contactStatus === EContactStatus.friend) {
-    //       throw new BadRequestException('You have been friend!');
-    //     }
-    //   }
-    // }
-    // const existContactFromFriend = await this.contactRepository.findOne({
-    //   where: {
-    //     user: new User({ id: friendId }),
-    //     friend: new User({ id: currentUserId }),
-    //   },
-    //   select: ['id', 'status'],
-    // });
-    // if (existContactFromFriend && existContactFromFriend.status) {
-    // }
-    // const contact = new Contact({
-    //   user: new User({ id: currentUserId }),
-    //   friend: new User({ id: friendId }),
-    // });
-    // const createContact = await this.contactRepository.save(contact);
-
-    // return createContact;
   }
 
   public async findMany(
@@ -175,35 +180,86 @@ export class ContactsService {
     updateContactStatusDto: UpdateContactStatusDto,
     currentUserId: string,
   ) {
-    const existContact = await this.findOneOrFailById(
-      id,
-      {
-        f: ['id', 'status', 'requester'],
+    const { status } = updateContactStatusDto;
+    const currentUser = new User({ id: currentUserId });
+    const existContact = await this.contactRepository.findOne({
+      where: [
+        {
+          id,
+          userOne: currentUser,
+        },
+        {
+          id,
+          userTwo: currentUser,
+        },
+      ],
+      relations: ['userOne', 'userTwo', 'requester'],
+      select: {
+        id: true,
+        status: true,
+        userOne: { id: true },
+        userTwo: { id: true },
+        requester: { id: true },
       },
-      currentUserId,
-    );
+    });
+    if (!existContact) {
+      throw new BadRequestException();
+    }
     const {
       id: existContactId,
       status: existContactStatus,
-      requester: existRequester,
+      userOne,
+      userTwo,
     } = existContact;
-    const requesterId = existRequester?.id;
-    if (!existContactId && !existContactStatus && !requesterId) {
+    const requesterId = existContact.requester?.id;
+    if (
+      !existContactId ||
+      !existContactStatus ||
+      !userOne ||
+      !userTwo ||
+      !requesterId
+    ) {
       throw new BadRequestException();
     }
-    const { status } = updateContactStatusDto;
-    if (requesterId !== currentUserId) {
-      if ()
+    const isRequesterMe = currentUserId === requesterId;
+    switch (existContactStatus) {
+      case EContactStatus.accepted:
+        if (status !== EContactStatus.cancelled) {
+          throw new BadRequestException();
+        }
+        await this.contactRepository.update(
+          { id },
+          {
+            status: EContactStatus.cancelled,
+            requester: currentUser,
+            statusAt: moment().toDate(),
+          },
+        );
+        // TODO
+        return { success: true };
+      case EContactStatus.cancelled:
+        // TOO
+        return;
+      case EContactStatus.pending:
+        if (status === EContactStatus.accepted) {
+        }
+      case EContactStatus.rejected:
+        return;
     }
-    if (status === EContactStatus.blocked) {
-    }
-    const updateResult = await this.contactRepository.update(
-      { id },
-      {
-        ...(status ? { status } : {}),
-      },
-    );
 
-    return !!updateResult.affected;
+    // const canUpdate;
+
+    // return !!updateResult.affected;
   }
+
+  // canUpdateStatus(
+  //   status,
+  //   {
+  //     myContactStatus,
+  //     otherContactStatus,
+  //   }: { myContactStatus: EContactStatus; otherContactStatus: EContactStatus },
+  // ) {
+  //   if (contactStatusRules[myContactStatus][otherContactStatus]) {
+  //   }
+  // }
 }

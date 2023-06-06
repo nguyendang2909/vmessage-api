@@ -1,8 +1,10 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { JoiSchemaOptions } from 'nestjs-joi';
+import Joi from 'joi';
+import { JoiSchema, JoiSchemaOptions } from 'nestjs-joi';
 
-@JoiSchemaOptions({ stripUnknown: true })
+@JoiSchemaOptions({})
 export class RequestFriendDto {
   @ApiProperty({ type: String })
+  @JoiSchema(Joi.string().guid().required())
   targetUserId!: string;
 }

@@ -12,11 +12,14 @@ export class Contact extends CommonEntity {
   @ManyToOne(() => User, { nullable: false })
   userTwo?: User;
 
+  @Column({ enum: EContactStatus, nullable: false, type: 'varchar' })
+  status?: EContactStatus;
+
+  @Column({ nullable: false, type: Date })
+  statusAt?: Date;
+
   @ManyToOne(() => User, { nullable: false })
   requester?: User;
-
-  @Column({ enum: EContactStatus, nullable: false, type: 'smallint' })
-  status?: EContactStatus;
 
   constructor(obj: Partial<Contact>) {
     super();

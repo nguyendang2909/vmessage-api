@@ -9,8 +9,8 @@ export class UpdateContactStatusDto {
   @ApiPropertyOptional({ type: Number, enum: EContactStatus })
   @JoiSchema(
     Joi.string()
-      .optional()
+      .required()
       .valid(...Object.values(EContactStatus)),
   )
-  status?: EContactStatus;
+  status: EContactStatus;
 }

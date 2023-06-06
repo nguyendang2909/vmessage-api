@@ -3,7 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 
 import { User } from '../../users/entities/user.entity';
-import { ERole } from '../../users/users.enum';
+import { ERole, EUserStatus } from '../../users/users.enum';
 import { EncryptionsService } from '../encryptions.service';
 
 @Injectable()
@@ -31,6 +31,7 @@ export class AuthAdminService {
           firstName: 'Nguyen Dang',
           lastName: 'Quynh',
           role: ERole.admin,
+          status: EUserStatus.activated,
         });
 
         await this.userRepository.save(adminUser);
