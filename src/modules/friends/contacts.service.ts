@@ -191,9 +191,10 @@ export class ContactsService {
     if (!existContactId && !existContactStatus && !requesterId) {
       throw new BadRequestException();
     }
-    if (requesterId === currentUserId) {
-    }
     const { status } = updateContactStatusDto;
+    if (requesterId !== currentUserId) {
+      if ()
+    }
     if (status === EContactStatus.blocked) {
     }
     const updateResult = await this.contactRepository.update(

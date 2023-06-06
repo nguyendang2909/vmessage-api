@@ -6,4 +6,17 @@ export enum EContactStatus {
   accepted = 'accepted',
 }
 
-export const contactStatusRuleRatings = [];
+export const contactStatus = {
+  me: {
+    [EContactStatus.blocked]: [
+      EContactStatus.pending,
+      EContactStatus.cancelled,
+    ],
+    [EContactStatus.rejected]: [EContactStatus.pending],
+    [EContactStatus.pending]: [
+      EContactStatus.blocked,
+      EContactStatus.cancelled,
+    ],
+    // [EContactStatus.]
+  },
+};
