@@ -2,19 +2,21 @@ import { BadRequestException, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 
+import { EntityFactory } from '../../commons/lib/entity-factory';
 import { User } from '../users/entities/user.entity';
 import { UsersService } from '../users/users.service';
+import { EContactStatus } from './contacts.constant';
 import { RequestFriendDto } from './dto/create-contact.dto';
 import { FindManyContactsDto } from './dto/find-many-contacts.dto';
-import { UpdateContactDto } from './dto/update-contact.dto';
-import { Friend } from './entities/friend.entity';
-import { EFriendStatus } from './friends.enum';
+import { FindOneContactByIdDto } from './dto/find-one-contact-by-id.dto';
+import { UpdateContactStatusDto } from './dto/update-contact.dto';
+import { Contact } from './entities/contact.entity';
 
 @Injectable()
-export class FriendsService {
+export class ContactsService {
   constructor(
-    @InjectRepository(Friend)
-    private readonly contactRepository: Repository<Friend>,
+    @InjectRepository(Contact)
+    private readonly contactRepository: Repository<Contact>,
     private readonly usersService: UsersService,
   ) {}
 
@@ -22,50 +24,50 @@ export class FriendsService {
     requestFriendDto: RequestFriendDto,
     currentUserId: string,
   ) {
-    const { friendId } = requestFriendDto;
+    const { targetUserId } = requestFriendDto;
     await this.usersService.findOneOrFailById(
-      friendId,
+      targetUserId,
       { f: ['id'] },
       currentUserId,
     );
     const currentUser = new User({ id: currentUserId });
-    const friendUser = new User({ id: friendId });
+    const friendUser = new User({ id: targetUserId });
     const existRelationship = await this.contactRepository.findOne({
       where: [
         {
-          friendOne: currentUser,
-          friendTwo: friendUser,
+          userOne: currentUser,
+          userTwo: friendUser,
         },
         {
-          friendOne: friendUser,
-          friendTwo: currentUser,
+          userOne: friendUser,
+          userTwo: currentUser,
         },
       ],
       select: ['id', 'status', 'requester'],
     });
     if (!existRelationship) {
       return await this.contactRepository.save({
-        friendOne: currentUser,
-        friendTwo: friendUser,
+        userOne: currentUser,
+        userTwo: friendUser,
         requester: currentUser,
       });
     }
-    const { status, requester, friendOne, friendTwo } = existRelationship;
+    const { status, requester, userOne, userTwo } = existRelationship;
     switch (status) {
-      case EFriendStatus.pending:
-        if (requester === friendId) {
+      case EContactStatus.pending:
+        if (requester === targetUserId) {
           return await this.contactRepository.save({
             id: existRelationship.id,
-            status: EFriendStatus.accepted,
+            status: EContactStatus.accepted,
           });
         }
         return existRelationship;
-      case EFriendStatus.accepted:
+      case EContactStatus.accepted:
         throw new BadRequestException({
           message: 'Your already were friend!',
           errorCode: 'ALREADY_FRIEND',
         });
-      case EFriendStatus.blocked:
+      case EContactStatus.blocked:
         throw new BadRequestException({
           message: 'User is not available!',
           errorCode: 'USER_NOT_AVAILABLE',
@@ -127,26 +129,75 @@ export class FriendsService {
     // };
   }
 
-  public async findOneById(id: string, currentUserId: string) {
-    // return await this.contactRepository.findOne({
-    //   where: { id, user: new User({ id: currentUserId }) },
-    // });
+  public async findOneById(
+    id: string,
+    findOneContactByIdDto: FindOneContactByIdDto,
+    currentUserId: string,
+  ) {
+    const { f } = findOneContactByIdDto;
+    return await this.contactRepository.findOne({
+      where: [
+        {
+          id,
+          userOne: {
+            id: currentUserId,
+          },
+        },
+        {
+          id,
+          userTwo: {
+            id: currentUserId,
+          },
+        },
+      ],
+      select: EntityFactory.getSelectFieldsAsObj(f),
+    });
   }
 
-  public async findOneOrFailById(id: string, currentUserId: string) {
-    // const findResult = await this.findOneById(id, currentUserId);
-    // if (!findResult) {
-    //   throw new BadRequestException('Contact not found!');
-    // }
-    // return findResult;
+  public async findOneOrFailById(
+    id: string,
+    findOneContactByIdDto: FindOneContactByIdDto,
+    currentUserId: string,
+  ) {
+    const findResult = await this.findOneById(
+      id,
+      findOneContactByIdDto,
+      currentUserId,
+    );
+    if (!findResult) {
+      throw new BadRequestException('Contact not found!');
+    }
+    return findResult;
   }
 
-  public async update(id: string, updateContactDto: UpdateContactDto) {
-    const { status } = updateContactDto;
-    const updateResult = await this.contactRepository.update(
+  public async updateStatus(
+    id: string,
+    updateContactStatusDto: UpdateContactStatusDto,
+    currentUserId: string,
+  ) {
+    const existContact = await this.findOneOrFailById(
+      id,
       {
-        id,
+        f: ['id', 'status', 'requester'],
       },
+      currentUserId,
+    );
+    const {
+      id: existContactId,
+      status: existContactStatus,
+      requester: existRequester,
+    } = existContact;
+    const requesterId = existRequester?.id;
+    if (!existContactId && !existContactStatus && !requesterId) {
+      throw new BadRequestException();
+    }
+    if (requesterId === currentUserId) {
+    }
+    const { status } = updateContactStatusDto;
+    if (status === EContactStatus.blocked) {
+    }
+    const updateResult = await this.contactRepository.update(
+      { id },
       {
         ...(status ? { status } : {}),
       },

@@ -2,23 +2,23 @@ import { Column, Entity, ManyToOne } from 'typeorm';
 
 import { CommonEntity } from '../../../commons/entities/common.entity';
 import { User } from '../../users/entities/user.entity';
-import { EFriendStatus } from '../friends.enum';
+import { EContactStatus } from '../contacts.constant';
 
 @Entity()
-export class Friend extends CommonEntity {
+export class Contact extends CommonEntity {
   @ManyToOne(() => User, { nullable: false })
-  friendOne?: User;
-
-  @ManyToOne(() => User, { nullable: false })
-  friendTwo?: User;
+  userOne?: User;
 
   @ManyToOne(() => User, { nullable: false })
-  requester: User;
+  userTwo?: User;
 
-  @Column({ enum: EFriendStatus, nullable: false, type: 'smallint' })
-  status?: EFriendStatus;
+  @ManyToOne(() => User, { nullable: false })
+  requester?: User;
 
-  constructor(obj: Partial<Friend>) {
+  @Column({ enum: EContactStatus, nullable: false, type: 'smallint' })
+  status?: EContactStatus;
+
+  constructor(obj: Partial<Contact>) {
     super();
     Object.assign(this, obj);
   }

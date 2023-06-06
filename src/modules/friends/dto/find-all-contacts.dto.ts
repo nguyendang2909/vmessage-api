@@ -3,15 +3,15 @@ import Joi from 'joi';
 import { JoiSchema, JoiSchemaOptions } from 'nestjs-joi';
 
 import { FindDto } from '../../../commons/dto/find.dto';
-import { EFriendStatus } from '../friends.enum';
+import { EContactStatus } from '../contacts.constant';
 
 @JoiSchemaOptions({ stripUnknown: true })
 export class FindAllContactsDto extends FindDto {
-  @ApiProperty({ type: String, enum: EFriendStatus })
+  @ApiProperty({ type: String, enum: EContactStatus })
   @JoiSchema(
     Joi.string()
       .required()
-      .valid(...Object.values(EFriendStatus)),
+      .valid(...Object.values(EContactStatus)),
   )
-  status!: EFriendStatus;
+  status!: EContactStatus;
 }
