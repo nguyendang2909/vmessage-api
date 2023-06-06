@@ -6,7 +6,8 @@ import { Repository } from 'typeorm';
 import { EntityFactory } from '../../commons/lib/entity-factory';
 import { User } from '../users/entities/user.entity';
 import { UsersService } from '../users/users.service';
-import { EContactStatus } from './contacts.constant';
+import { contactStatusRules, EContactStatus } from './contacts.constant';
+import { ICanSetContactStatus } from './contacts.type';
 import { RequestFriendDto } from './dto/create-contact.dto';
 import { FindManyContactsDto } from './dto/find-many-contacts.dto';
 import { FindOneContactByIdDto } from './dto/find-one-contact-by-id.dto';
@@ -74,38 +75,31 @@ export class ContactsService {
       throw new BadRequestException();
     }
     const isRequesterMe = currentUserId === requesterId;
-    switch (existContactStatus) {
-      case EContactStatus.pending:
-        if (isRequesterMe) {
-          return { success: true };
-        }
-        await this.contactRepository.update(
-          { id: existContactId },
-          {
-            status: EContactStatus.accepted,
-            requester: currentUser,
-            statusAt: now,
-          },
-        );
-        return { success: true };
-
-      case EContactStatus.accepted:
-        throw new BadRequestException({
-          errorCode: 'ALREADY_FRIEND',
-          message: 'You are already friend!',
-        });
-
-      default:
-        await this.contactRepository.update(
-          { id: existContactId },
-          {
-            status: EContactStatus.pending,
-            statusAt: now,
-            requester: currentUser,
-          },
-        );
-        return { success: true };
+    if (!isRequesterMe && existContactStatus === EContactStatus.pending) {
+      await this.contactRepository.update(
+        { id: existContactId },
+        {
+          status: EContactStatus.accepted,
+          statusAt: now,
+          requester: currentUser,
+        },
+      );
+      return { success: true };
     }
+    this.checkCanSetStatus({
+      status: EContactStatus.pending,
+      currentStatus: existContactStatus,
+      isRequesterMe,
+    });
+    await this.contactRepository.update(
+      { id: existContactId },
+      {
+        status: EContactStatus.pending,
+        statusAt: now,
+        requester: currentUser,
+      },
+    );
+    return { success: true };
   }
 
   public async findMany(
@@ -222,34 +216,37 @@ export class ContactsService {
       throw new BadRequestException();
     }
     const isRequesterMe = currentUserId === requesterId;
-    switch (existContactStatus) {
-      case EContactStatus.accepted:
-        if (status !== EContactStatus.cancelled) {
-          throw new BadRequestException();
-        }
-        await this.contactRepository.update(
-          { id },
-          {
-            status: EContactStatus.cancelled,
-            requester: currentUser,
-            statusAt: moment().toDate(),
-          },
-        );
-        // TODO
-        return { success: true };
-      case EContactStatus.cancelled:
-        // TOO
-        return;
-      case EContactStatus.pending:
-        if (status === EContactStatus.accepted) {
-        }
-      case EContactStatus.rejected:
-        return;
+    this.checkCanSetStatus({
+      status,
+      currentStatus: existContactStatus,
+      isRequesterMe,
+    });
+    await this.contactRepository.update(
+      { id },
+      {
+        status,
+        statusAt: moment().toDate(),
+        requester: currentUser,
+      },
+    );
+
+    return { success: true };
+  }
+
+  private canSetStatus({
+    status,
+    currentStatus,
+    isRequesterMe,
+  }: ICanSetContactStatus): boolean {
+    return contactStatusRules[isRequesterMe ? 'me' : 'other'][
+      currentStatus
+    ].includes(status);
+  }
+
+  private checkCanSetStatus(data: ICanSetContactStatus) {
+    if (!this.canSetStatus(data)) {
+      throw new BadRequestException();
     }
-
-    // const canUpdate;
-
-    // return !!updateResult.affected;
   }
 
   // canUpdateStatus(
