@@ -11,7 +11,7 @@ export class FindAllContactsDto extends FindDto {
   @JoiSchema(
     Joi.string()
       .required()
-      .valid(...Object.values(EContactStatus)),
+      .valid(EContactStatus.accepted, EContactStatus.pending),
   )
   status!: EContactStatus;
 }

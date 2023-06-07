@@ -1,7 +1,7 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import moment from 'moment';
-import { Repository } from 'typeorm';
+import { MoreThan, Repository } from 'typeorm';
 
 import { EntityFactory } from '../../commons/lib/entity-factory';
 import { User } from '../users/entities/user.entity';
@@ -107,25 +107,33 @@ export class ContactsService {
     currentUserId: string,
   ) {
     const { status, cursor, f } = findManyContactsDto;
-    // const findResult = await this.contactRepository.find({
-    //   where: {
-    //     user: new User({ id: currentUserId }),
-    //     ...(status ? { status } : {}),
-    //     ...(cursor ? { id: MoreThan(cursor) } : {}),
-    //   },
-    //   order: {
-    //     updatedAt: -1,
-    //   },
-    //   take: 50,
-    //   select: EntityFactory.getSelectFieldsAsObj(f),
-    // });
+    const currentUser = new User({ id: currentUserId });
+    const findResult = await this.contactRepository.find({
+      where: [
+        {
+          userOne: currentUser,
+          status,
+          ...(cursor ? { id: MoreThan(cursor) } : {}),
+        },
+        {
+          userTwo: currentUser,
+          status,
+          ...(cursor ? { id: MoreThan(cursor) } : {}),
+        },
+      ],
+      order: {
+        updatedAt: -1,
+      },
+      take: 50,
+      select: EntityFactory.getSelectFieldsAsObj(f),
+    });
 
-    // return {
-    //   data: findResult,
-    //   pagination: {
-    //     cursor: EntityFactory.getCursor(findResult),
-    //   },
-    // };
+    return {
+      data: findResult,
+      pagination: {
+        cursor: EntityFactory.getCursor(findResult),
+      },
+    };
   }
 
   public async findOneById(
@@ -149,7 +157,8 @@ export class ContactsService {
           },
         },
       ],
-      select: EntityFactory.getSelectFieldsAsObj(f),
+      relations: ['userOne', 'userTwo'],
+      // select: EntityFactory.getSelectFieldsAsObj(f),
     });
   }
 
