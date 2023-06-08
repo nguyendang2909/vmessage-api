@@ -5,7 +5,7 @@ import { EncryptionsUtil } from '../encryptions/encryptions.util';
 import { UsersAuthUtil } from '../users/auth-users.util';
 import { EUserStatus } from '../users/users.enum';
 import { UsersUtil } from '../users/users.util';
-import { CreateChatDto } from './dto/create-chat.dto';
+import { SendChatMessageDto } from './dto/create-chat.dto';
 import { UpdateChatDto } from './dto/update-chat.dto';
 
 @Injectable()
@@ -18,7 +18,7 @@ export class ChatsService {
 
   private readonly logger = new Logger(ChatsService.name);
 
-  create(createChatDto: CreateChatDto) {
+  sendMessage(sendChatMessageDto: SendChatMessageDto) {
     return 'This action adds a new chat';
   }
 
@@ -39,17 +39,22 @@ export class ChatsService {
   }
 
   public async handleConnection(socket: Socket) {
+    console.log(socket.handshake);
     const { authorization } = socket.handshake.headers;
     const token = authorization?.split(' ')[1];
+    console.log(token);
     if (token) {
       const decodedToken = this.encryptionsUtil.verifyJwt(token);
       const user = await this.usersAuthUtil.findOneById(decodedToken.id);
       if (user && user.status !== EUserStatus.banned) {
         socket.handshake.user = user;
+        socket.join(user.id);
         this.logger.log(`Socket connected: ${socket.id}`);
         return;
       }
     }
+
+    // throw new WsException('Unauthorized');
 
     socket.disconnect();
   }

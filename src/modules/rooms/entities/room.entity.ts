@@ -1,16 +1,20 @@
-import { Column, Entity, JoinTable, ManyToMany } from 'typeorm';
+import { Column, Entity } from 'typeorm';
 
 import { CommonEntity } from '../../../commons/entities/common.entity';
-import { User } from '../../users/entities/user.entity';
 
 @Entity()
 export class Room extends CommonEntity {
-  @Column({ nullable: true, type: String })
-  title?: string;
+  @Column({ nullable: true, type: 'varchar' })
+  latMessage: string;
 
-  @ManyToMany(() => User)
-  @JoinTable()
-  users?: User[];
+  @Column({ nullable: true, type: 'date' })
+  lastMessageAt: Date;
+
+  @Column({ nullable: true, type: 'varchar' })
+  name?: string;
+
+  @Column({ array: true, nullable: false, type: 'uuid' })
+  userIds?: string[];
 
   constructor(obj: Partial<Room>) {
     super();

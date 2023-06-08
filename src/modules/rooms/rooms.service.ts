@@ -4,10 +4,9 @@ import _ from 'lodash';
 import { MoreThan, Repository } from 'typeorm';
 
 import { EntityFactory } from '../../commons/lib/entity-factory';
-import { User } from '../users/entities/user.entity';
-import { CreateRoomDto } from './dto/create-room.dto';
 import { FindManyRoomsDto } from './dto/find-many-room.dto';
 import { FindOneRoomByIdDto } from './dto/find-one-room-by-id.dto';
+import { CreateRoomDto } from './dto/join-room.dto';
 import { Room } from './entities/room.entity';
 
 @Injectable()
@@ -18,9 +17,11 @@ export class RoomsService {
 
   public async create(createRoomDto: CreateRoomDto, currentUserId: string) {
     const { userIds } = createRoomDto;
-    const uniqueUserIds = _.union(userIds, currentUserId);
+    const uniqueUserIds = _.union(userIds, currentUserId).sort();
     const createResult = await this.roomRepository.save({
-      users: uniqueUserIds.map((userId) => new User({ id: userId })),
+      userIds: uniqueUserIds,
+      createdBy: currentUserId,
+      updatedBy: currentUserId,
     });
 
     return createResult;
@@ -33,7 +34,7 @@ export class RoomsService {
     const { cursor, f } = findManyRoomsDto;
     const findResult = await this.roomRepository.find({
       where: {
-        users: new User({ id: currentUserId }),
+        userIds: currentUserId,
         ...(cursor ? { id: MoreThan(cursor) } : {}),
       },
       take: 20,
@@ -57,7 +58,7 @@ export class RoomsService {
     const findResult = await this.roomRepository.findOne({
       where: {
         id,
-        users: new User({ id: currentUserId }),
+        userIds: currentUserId,
       },
       select: EntityFactory.getSelectFieldsAsObj(f),
     });

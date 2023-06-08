@@ -1,1 +1,3 @@
-export class CreateChatDto {}
+export class SendChatMessageDto {
+  roomId: string;
+}

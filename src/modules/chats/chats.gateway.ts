@@ -8,7 +8,7 @@ import {
 import { Server, Socket } from 'socket.io';
 
 import { ChatsService } from './chats.service';
-import { CreateChatDto } from './dto/create-chat.dto';
+import { SendChatMessageDto } from './dto/create-chat.dto';
 import { UpdateChatDto } from './dto/update-chat.dto';
 
 @WebSocketGateway({
@@ -23,9 +23,9 @@ export class ChatsGateway {
 
   private readonly logger = new Logger(ChatsGateway.name);
 
-  @SubscribeMessage('createChat')
-  create(@MessageBody() createChatDto: CreateChatDto) {
-    return this.chatsService.create(createChatDto);
+  @SubscribeMessage('sendMessage')
+  create(@MessageBody() sendChatMessageDto: SendChatMessageDto) {
+    return this.chatsService.sendMessage(sendChatMessageDto);
   }
 
   @SubscribeMessage('findAllChats')
