@@ -29,7 +29,7 @@ export class User extends BaseEntity {
     nullable: false,
     type: 'varchar',
   })
-  phoneNumber?: string;
+  phoneNumber!: string;
 
   @Column({
     default: ERole.member,
@@ -37,7 +37,7 @@ export class User extends BaseEntity {
     nullable: false,
     type: 'enum',
   })
-  role?: ERole;
+  role!: ERole;
 
   @Column({
     default: EUserStatus.activated,
@@ -45,7 +45,7 @@ export class User extends BaseEntity {
     nullable: false,
     type: 'enum',
   })
-  status?: EUserStatus;
+  status!: EUserStatus;
 
   @Column({ type: 'uuid', nullable: true })
   createdBy?: string;

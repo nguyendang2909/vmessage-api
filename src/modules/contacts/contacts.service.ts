@@ -5,7 +5,7 @@ import { MoreThan, Repository } from 'typeorm';
 
 import { EntityFactory } from '../../commons/lib/entity-factory';
 import { User } from '../users/entities/user.entity';
-import { UsersService } from '../users/users.service';
+import { UsersUtil } from '../users/users.util';
 import { contactStatusRules, EContactStatus } from './contacts.constant';
 import { ICanSetContactStatus } from './contacts.type';
 import { RequestFriendDto } from './dto/create-contact.dto';
@@ -19,7 +19,7 @@ export class ContactsService {
   constructor(
     @InjectRepository(Contact)
     private readonly contactRepository: Repository<Contact>,
-    private readonly usersService: UsersService,
+    private readonly usersUtil: UsersUtil,
   ) {}
 
   public async requestFriend(
@@ -27,7 +27,7 @@ export class ContactsService {
     currentUserId: string,
   ): Promise<{ success: boolean }> {
     const { targetUserId } = requestFriendDto;
-    await this.usersService.findOneOrFailById(
+    await this.usersUtil.findOneOrFailById(
       targetUserId,
       { f: ['id'] },
       currentUserId,

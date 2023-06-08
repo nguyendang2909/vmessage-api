@@ -5,19 +5,19 @@ import {
   UnauthorizedException,
 } from '@nestjs/common';
 
+import { EncryptionsUtil } from '../../encryptions/encryptions.util';
+import { UsersAuthUtil } from '../../users/auth-users.util';
 import { EUserStatus } from '../../users/users.enum';
 import { SignInData } from '../auth.type';
-import { AuthUsersService } from '../auth-users.service';
 import { SignInWithPhoneNumberDto } from '../dto/sign-in-with-phone-number.dto';
 import { SignInWithPhoneNumberAndPasswordDto } from '../dto/sign-in-with-phone-number-and-password.dto';
-import { EncryptionsService } from '../encryptions.service';
 import { FirebaseService } from '../firebase.service';
 
 @Injectable()
 export class SignInService {
   constructor(
-    private readonly authUsersService: AuthUsersService,
-    private readonly encryptionsService: EncryptionsService,
+    private readonly usersAuthUtil: UsersAuthUtil,
+    private readonly encryptionsUtil: EncryptionsUtil,
     private readonly firebaseService: FirebaseService,
   ) {}
 
@@ -30,7 +30,7 @@ export class SignInService {
     if (!phoneNumber) {
       throw new BadRequestException('Token is invalid!');
     }
-    let user = await this.authUsersService.findOne(
+    let user = await this.usersAuthUtil.findOne(
       { phoneNumber },
       {
         selects: ['status', 'role'],
@@ -42,7 +42,7 @@ export class SignInService {
         throw new ForbiddenException('You have been banned!');
       }
     } else {
-      user = await this.authUsersService.create({
+      user = await this.usersAuthUtil.create({
         phoneNumber,
       });
     }
@@ -52,7 +52,7 @@ export class SignInService {
     }
 
     return {
-      accessToken: this.encryptionsService.signJwt({
+      accessToken: this.encryptionsUtil.signJwt({
         sub: id,
         id,
         role,
@@ -68,14 +68,14 @@ export class SignInService {
       password: userPassword,
       id: userId,
       role: userRole,
-    } = await this.authUsersService.findOneOrFail(
+    } = await this.usersAuthUtil.findOneOrFail(
       { phoneNumber },
       { selects: ['password', 'id', 'role'] },
     );
     if (!userId || !userPassword || !userRole) {
       throw new BadRequestException('Try login with OTP!');
     }
-    const isMatchPassword = this.encryptionsService.isMatchWithHashedKey(
+    const isMatchPassword = this.encryptionsUtil.isMatchWithHashedKey(
       password,
       userPassword,
     );
@@ -86,7 +86,7 @@ export class SignInService {
     }
 
     return {
-      accessToken: this.encryptionsService.signJwt({
+      accessToken: this.encryptionsUtil.signJwt({
         id: userId,
         sub: userId,
         role: userRole,

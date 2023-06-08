@@ -2,10 +2,10 @@ import { createMock } from '@golevelup/ts-jest';
 import { Test, TestingModule } from '@nestjs/testing';
 import { DecodedIdToken } from 'firebase-admin/lib/auth/token-verifier';
 
+import { AuthUsersService } from '../users/auth-users.util';
 import { User } from '../users/entities/user.entity';
 import { ERole, EUserStatus } from '../users/users.enum';
 import { AuthSignInService } from './auth-sign-in.service';
-import { AuthUsersService } from './auth-users.service';
 import { SignInByPhoneNumberDto } from './dto/register-auth.dto';
 import { EncryptionsService } from './encryptions.service';
 import { FirebaseService } from './firebase.service';

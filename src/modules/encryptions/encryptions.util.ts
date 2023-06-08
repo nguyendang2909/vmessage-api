@@ -2,10 +2,10 @@ import { Injectable } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import bcrypt from 'bcrypt';
 
-import { AuthJwtPayload, AuthJwtSignPayload } from './auth.type';
+import { AuthJwtPayload, AuthJwtSignPayload } from '../auth/auth.type';
 
 @Injectable()
-export class EncryptionsService {
+export class EncryptionsUtil {
   constructor(private readonly jwtService: JwtService) {}
 
   private hashSecretKey = process.env.HASH_SECRET_KEY;

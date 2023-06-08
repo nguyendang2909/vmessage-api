@@ -49,9 +49,7 @@ export class ChatsGateway {
   }
 
   private async handleConnection(socket: Socket) {
-    this.logger.log(`Socket connected: ${socket.id}`);
-
-    socket.disconnect();
+    return await this.chatsService.handleConnection(socket);
   }
 
   private async handleDisconnect(socket: Socket) {
