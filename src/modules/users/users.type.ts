@@ -5,4 +5,4 @@ export type FindOneUserConditions = {
   phoneNumber?: string;
 };
 
-export type CurrentUser = User;
+export type CurrentUser = User & { id: string };

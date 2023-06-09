@@ -1,4 +1,4 @@
-import { Logger } from '@nestjs/common';
+import { Logger, UseGuards, UsePipes } from '@nestjs/common';
 import {
   MessageBody,
   SubscribeMessage,
@@ -7,9 +7,14 @@ import {
 } from '@nestjs/websockets';
 import { Server, Socket } from 'socket.io';
 
+import { WsValidationPipe } from '../../commons/pipes/ws-validation-pipe';
 import { ChatsService } from './chats.service';
-import { SendChatMessageDto } from './dto/create-chat.dto';
+import {
+  sendChangeMessageSchema,
+  SendChatMessageDto,
+} from './dto/create-chat.dto';
 import { UpdateChatDto } from './dto/update-chat.dto';
+import { WsAuthGuard } from './guards/ws-auth.guard';
 
 @WebSocketGateway({
   namespace: '/chats',
@@ -23,9 +28,14 @@ export class ChatsGateway {
 
   private readonly logger = new Logger(ChatsGateway.name);
 
-  @SubscribeMessage('sendMessage')
-  create(@MessageBody() sendChatMessageDto: SendChatMessageDto) {
-    return this.chatsService.sendMessage(sendChatMessageDto);
+  @UseGuards(WsAuthGuard)
+  @UsePipes(new WsValidationPipe(sendChangeMessageSchema))
+  @SubscribeMessage('sendMsg')
+  public async create(
+    @MessageBody() sendChatMessageDto: SendChatMessageDto,
+    socket: Socket,
+  ) {
+    return await this.chatsService.sendMessage(sendChatMessageDto, socket);
   }
 
   @SubscribeMessage('findAllChats')

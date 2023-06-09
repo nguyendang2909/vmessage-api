@@ -36,8 +36,16 @@ export class WsAuthGuard implements CanActivate {
         message: 'User not found',
       });
     }
+    const userId = user.id;
+    if (!userId) {
+      throw new WsException({
+        status: 404,
+        type: 'user',
+        message: 'User not found',
+      });
+    }
 
-    client.handshake.user = user;
+    client.handshake.user = { ...user, id: userId };
 
     // Add your custom authentication logic here
     // for example, call super.logIn(request) to establish a session.

@@ -19,6 +19,7 @@ import { ContactsModule } from './modules/contacts/contacts.module';
 import { RoomsModule } from './modules/rooms/rooms.module';
 import { UsersModule } from './modules/users/users.module';
 import { EncryptionsModule } from './modules/encryptions/encryptions.module';
+import { MessagesModule } from './modules/messages/messages.module';
 
 @Module({
   imports: [
@@ -108,6 +109,7 @@ import { EncryptionsModule } from './modules/encryptions/encryptions.module';
     RoomsModule,
     ContactsModule,
     EncryptionsModule,
+    MessagesModule,
   ],
   providers: [
     { provide: APP_GUARD, useClass: ThrottlerGuard },
